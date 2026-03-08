@@ -1,0 +1,79 @@
+{
+  "Header": {
+    "whatis": "VTuber EXPOとは！？",
+    "about": "VTuber EXPOの魅力",
+    "news": "最新情報",
+    "overview": "イベント詳細",
+    "lineup": "出演者一覧",
+    "schedule": "当日の流れ"
+  },
+  "LanguageToggle": {
+    "ja": "JP",
+    "en": "EN"
+  },
+  "Hero": {
+    "title": "VTUBER EXPO 2026",
+    "date": "2026.5.3 SAT - 5.4 SUN",
+    "venue": "ベルサール秋葉原",
+    "producer": "produced by VEXZ",
+    "free": "入場無料"
+  },
+  "About": {
+    "sectionTitle": "VTuber EXPOの3つの魅力！",
+    "sectionSubtitle": "ABOUT VTUBER EXPO",
+    "leadCopy": "見て、触れて、体感する！ 史上初のVTuber特化型エキスポが、ついに秋葉原に誕生！\nライブもトークも展示もグッズも、2日間まるごとぜんぶVTuber！\nここでしか味わえないワクワクが、あなたを待っています！",
+    "card1Title": "史上初！\nVTuber特化の大型エキスポ！",
+    "card1Desc": "VTuberだけの大型展示イベントは、これが史上初！ ライブステージ、トークショー、企業展示、物販、フードコートまで——VTuberのすべてが詰まった夢の空間が、2日間限りで秋葉原に出現します！",
+    "card2Title": "30以上のVTuber事務所が\nぜんぶ集結！",
+    "card2Desc": "ホロライブ、にじさんじ、ぶいすぽっ！をはじめ、国内外30以上のVTuber事務所がひとつの会場に大集結！ 推しに会えるのはもちろん、まだ知らない才能との運命の出会いも！ これだけの事務所が揃うイベントは、ほかにありません！",
+    "card3Title": "2日間ぶっ通し！\nリアルでしか味わえない興奮！",
+    "card3Desc": "スペシャルライブ、限定トークイベント、コラボフード、ここでしか手に入らない限定グッズ！ すべてが「リアル」だからこそ生まれる熱量がここにあります！ 画面の向こうの推しが、いま目の前に。しかも入場無料！ 誰でも参加OK！"
+  },
+  "News": {
+    "sectionTitle": "最新情報をチェック！",
+    "sectionSubtitle": "LATEST NEWS",
+    "backToList": "おしらせ一覧に戻る"
+  },
+  "Overview": {
+    "sectionTitle": "開催概要",
+    "sectionSubtitle": "EVENT DETAILS",
+    "eventName": "イベント名",
+    "eventNameValue": "VTUBER EXPO 2026",
+    "date": "開催日時",
+    "dateValue": "2026年5月3日(土) - 5月4日(日)",
+    "venue": "会場",
+    "venueValue": "ベルサール秋葉原 1階",
+    "admission": "参加方法",
+    "admissionValue": "入場無料（一部有料プログラムあり）",
+    "organizer": "主催",
+    "organizerValue": "VEXZ"
+  },
+  "FreeAdmission": {
+    "title": "入場無料！",
+    "subtitle": "FREE ADMISSION",
+    "note": "※一部有料プログラムあり"
+  },
+  "Lineup": {
+    "sectionTitle": "史上最大級！30超のVTuber事務所が一堂に集結！",
+    "sectionSubtitle": "LINE UP",
+    "agencies": "出演事務所",
+    "sponsors": "協賛企業",
+    "tieups": "タイアップ",
+    "comingSoon": "Coming Soon"
+  },
+  "Schedule": {
+    "sectionTitle": "当日の流れ",
+    "sectionSubtitle": "TIME SCHEDULE",
+    "day1": "DAY 1 - 5/3 SAT",
+    "day2": "DAY 2 - 5/4 SUN"
+  },
+  "Social": {
+    "subtitle": "FOLLOW US",
+    "title": "最新情報はこちら！",
+    "description": "公式XとYouTubeチャンネルで、出演者情報やイベントの最新ニュースをいち早くお届けします！"
+  },
+  "Footer": {
+    "producer": "produced by VEXZ",
+    "copyright": "© 2026 VEXZ. All Rights Reserved."
+  }
+}

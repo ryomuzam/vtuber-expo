@@ -1,0 +1,79 @@
+{
+  "Header": {
+    "whatis": "What is VTuber EXPO!?",
+    "about": "Why VTuber EXPO",
+    "news": "Latest",
+    "overview": "Details",
+    "lineup": "Line Up",
+    "schedule": "Schedule"
+  },
+  "LanguageToggle": {
+    "ja": "JP",
+    "en": "EN"
+  },
+  "Hero": {
+    "title": "VTUBER EXPO 2026",
+    "date": "2026.5.3 SAT - 5.4 SUN",
+    "venue": "Bellesalle Akihabara",
+    "producer": "produced by VEXZ",
+    "free": "FREE ADMISSION"
+  },
+  "About": {
+    "sectionTitle": "3 Reasons to Get Excited!",
+    "sectionSubtitle": "ABOUT VTUBER EXPO",
+    "leadCopy": "See it! Touch it! Feel it! The world's first VTuber-dedicated expo has finally landed in Akihabara!\nLive shows, talk events, exhibitions, merch — two full days of nothing but VTuber!\nAn excitement you won't find anywhere else is waiting for you!",
+    "card1Title": "The World's First!\nVTuber-Dedicated Expo!",
+    "card1Desc": "A large-scale exhibition dedicated entirely to VTubers — and it's a world first! Live stages, talk shows, corporate exhibits, merch, food courts — a dream space packed with everything VTuber, appearing in Akihabara for two days only!",
+    "card2Title": "30+ VTuber Agencies\nAll in One Place!",
+    "card2Desc": "Hololive, Nijisanji, VSPO! and so many more — over 30 VTuber agencies from Japan and around the world, all united under one roof! Meet your favorites and discover amazing new talent! No other event brings this many agencies together!",
+    "card3Title": "Two Days Non-Stop!\nReal-World Thrills!",
+    "card3Desc": "Special live performances, exclusive talk events, collab food, limited-edition merch you can only get here! The energy that only comes from being there in person! Your favorite VTubers, right before your eyes — and admission is totally free!"
+  },
+  "News": {
+    "sectionTitle": "Check the Latest!",
+    "sectionSubtitle": "LATEST NEWS",
+    "backToList": "Back to News"
+  },
+  "Overview": {
+    "sectionTitle": "Event Details",
+    "sectionSubtitle": "EVENT DETAILS",
+    "eventName": "Event Name",
+    "eventNameValue": "VTUBER EXPO 2026",
+    "date": "Date",
+    "dateValue": "May 3 (Sat) - May 4 (Sun), 2026",
+    "venue": "Venue",
+    "venueValue": "Bellesalle Akihabara 1F",
+    "admission": "Admission",
+    "admissionValue": "Free admission (some paid programs)",
+    "organizer": "Organizer",
+    "organizerValue": "VEXZ"
+  },
+  "FreeAdmission": {
+    "title": "FREE ADMISSION!",
+    "subtitle": "FREE ADMISSION",
+    "note": "* Some programs require paid tickets"
+  },
+  "Lineup": {
+    "sectionTitle": "The Biggest Ever! 30+ VTuber Agencies Unite!",
+    "sectionSubtitle": "LINE UP",
+    "agencies": "Performing Agencies",
+    "sponsors": "Sponsors",
+    "tieups": "Tie-ups",
+    "comingSoon": "Coming Soon"
+  },
+  "Schedule": {
+    "sectionTitle": "What to Expect",
+    "sectionSubtitle": "TIME SCHEDULE",
+    "day1": "DAY 1 - 5/3 SAT",
+    "day2": "DAY 2 - 5/4 SUN"
+  },
+  "Social": {
+    "subtitle": "FOLLOW US",
+    "title": "Stay in the Loop!",
+    "description": "Follow our official X and YouTube channels for the latest performer announcements and event news!"
+  },
+  "Footer": {
+    "producer": "produced by VEXZ",
+    "copyright": "© 2026 VEXZ. All Rights Reserved."
+  }
+}
