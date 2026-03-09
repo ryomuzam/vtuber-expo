@@ -303,3 +303,83 @@ export async function setEventScheduleData(data: EventScheduleData): Promise<voi
   if (!kv) throw new Error("KV not configured");
   await kv.set("event:schedule", data);
 }
+
+// Logo Marquee
+export type MarqueeSettings = {
+  isPublic: boolean;
+};
+
+export async function getMarqueeSettings(): Promise<MarqueeSettings> {
+  const kv = await getKV();
+  if (!kv) return { isPublic: false };
+  const data = await kv.get<MarqueeSettings>("marquee:settings");
+  return data ?? { isPublic: false };
+}
+
+export async function setMarqueeSettings(settings: MarqueeSettings): Promise<void> {
+  const kv = await getKV();
+  if (!kv) throw new Error("KV not configured");
+  await kv.set("marquee:settings", settings);
+}
+
+// Tiered Sponsors
+export type SponsorTier = "gold" | "silver" | "bronze" | "sampling";
+
+export type TieredSponsor = {
+  id: string;
+  name: string;
+  logoUrl: string;
+  websiteUrl: string;
+  tier: SponsorTier;
+};
+
+export type SponsorPageData = {
+  isPublic: boolean;
+  sponsors: TieredSponsor[];
+};
+
+const staticSponsorPageData: SponsorPageData = {
+  isPublic: false,
+  sponsors: [],
+};
+
+export async function getSponsorPageData(): Promise<SponsorPageData> {
+  const kv = await getKV();
+  if (!kv) return staticSponsorPageData;
+  const data = await kv.get<SponsorPageData>("sponsor:page");
+  return data ?? staticSponsorPageData;
+}
+
+export async function setSponsorPageData(data: SponsorPageData): Promise<void> {
+  const kv = await getKV();
+  if (!kv) throw new Error("KV not configured");
+  await kv.set("sponsor:page", data);
+}
+
+// X Share tracking
+export type ShareStats = {
+  total: number;
+  daily: Record<string, number>; // "YYYY-MM-DD" -> count
+};
+
+export async function getShareStats(): Promise<ShareStats> {
+  const kv = await getKV();
+  if (!kv) return { total: 0, daily: {} };
+  const data = await kv.get<ShareStats>("share:stats");
+  return data ?? { total: 0, daily: {} };
+}
+
+export async function incrementShareCount(): Promise<void> {
+  const kv = await getKV();
+  if (!kv) return;
+  const stats = await getShareStats();
+  const today = new Date().toISOString().split("T")[0];
+  stats.total += 1;
+  stats.daily[today] = (stats.daily[today] ?? 0) + 1;
+  // Keep only last 30 days
+  const keys = Object.keys(stats.daily).sort();
+  if (keys.length > 30) {
+    keys.slice(0, keys.length - 30).forEach((k) => delete stats.daily[k]);
+  }
+  await kv.set("share:stats", stats);
+}

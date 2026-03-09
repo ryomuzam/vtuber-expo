@@ -2,16 +2,21 @@ export const dynamic = "force-dynamic";
 
 import AdminNav from "./_components/AdminNav";
 import Link from "next/link";
-import { getNews, getHeroSlides, getAgencies, getSponsors, getTieups } from "@/lib/data";
+import { getNews, getHeroSlides, getAgencies, getSponsors, getTieups, getSponsorPageData, getShareStats } from "@/lib/data";
 
 export default async function AdminDashboard() {
-  const [news, slides, agencies, sponsors, tieups] = await Promise.all([
+  const [news, slides, agencies, sponsors, tieups, sponsorPage, shareStats] = await Promise.all([
     getNews(),
     getHeroSlides(),
     getAgencies(),
     getSponsors(),
     getTieups(),
+    getSponsorPageData(),
+    getShareStats(),
   ]);
+
+  const today = new Date().toISOString().split("T")[0];
+  const todayShares = shareStats.daily[today] ?? 0;
 
   const stats = [
     { label: "ニュース記事", count: news.length, href: "/admin/news" },
@@ -19,6 +24,7 @@ export default async function AdminDashboard() {
     { label: "事務所ロゴ", count: agencies.length, href: "/admin/logos" },
     { label: "協賛ロゴ", count: sponsors.length, href: "/admin/logos" },
     { label: "タイアップ", count: tieups.length, href: "/admin/logos" },
+    { label: "スポンサー", count: sponsorPage.sponsors.length, href: "/admin/sponsors" },
   ];
 
   return (
@@ -41,7 +47,44 @@ export default async function AdminDashboard() {
           ))}
         </div>
 
-        <div className="mt-10 grid gap-4 sm:grid-cols-3">
+        {/* X Share Stats */}
+        <div className="mt-8 rounded-xl bg-white p-6 shadow-sm">
+          <h2 className="mb-4 font-bold text-gray-900">X シェアボタン 統計</h2>
+          <div className="flex gap-8">
+            <div>
+              <p className="text-3xl font-bold text-[#3D7FE0]">{shareStats.total}</p>
+              <p className="mt-1 text-sm text-gray-500">累計クリック数</p>
+            </div>
+            <div>
+              <p className="text-3xl font-bold text-[#3D7FE0]">{todayShares}</p>
+              <p className="mt-1 text-sm text-gray-500">本日のクリック数</p>
+            </div>
+          </div>
+          {Object.keys(shareStats.daily).length > 0 && (
+            <div className="mt-4">
+              <p className="mb-2 text-xs font-medium text-gray-500">直近の推移</p>
+              <div className="space-y-1">
+                {Object.entries(shareStats.daily)
+                  .sort(([a], [b]) => b.localeCompare(a))
+                  .slice(0, 7)
+                  .map(([date, count]) => (
+                    <div key={date} className="flex items-center gap-3">
+                      <span className="w-24 text-xs text-gray-500">{date}</span>
+                      <div className="flex-1 rounded-full bg-gray-100 h-2">
+                        <div
+                          className="h-2 rounded-full bg-[#3D7FE0]"
+                          style={{ width: `${Math.min(100, (count / Math.max(...Object.values(shareStats.daily))) * 100)}%` }}
+                        />
+                      </div>
+                      <span className="w-6 text-right text-xs font-medium text-gray-700">{count}</span>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="mt-6 grid gap-4 sm:grid-cols-3">
           <Link
             href="/admin/news/new"
             className="flex items-center gap-3 rounded-xl bg-white p-5 shadow-sm transition hover:shadow-md"

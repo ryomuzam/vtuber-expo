@@ -4,6 +4,7 @@ import {
   getAgencies, setAgencies,
   getSponsors, setSponsors,
   getTieups, setTieups,
+  getMarqueeSettings, setMarqueeSettings,
   type Agency, type Sponsor, type Tieup,
 } from "@/lib/data";
 import { revalidatePath } from "next/cache";
@@ -18,19 +19,21 @@ export async function GET(request: NextRequest) {
   const payload = await authenticate(request);
   if (!payload) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const [agencies, sponsors, tieups] = await Promise.all([
+  const [agencies, sponsors, tieups, marquee] = await Promise.all([
     getAgencies(),
     getSponsors(),
     getTieups(),
+    getMarqueeSettings(),
   ]);
 
-  return NextResponse.json({ agencies, sponsors, tieups });
+  return NextResponse.json({ agencies, sponsors, tieups, marquee });
 }
 
 type LogosPayload = {
   agencies?: Agency[];
   sponsors?: Sponsor[];
   tieups?: Tieup[];
+  marquee?: { isPublic: boolean };
 };
 
 export async function PUT(request: NextRequest) {
@@ -43,6 +46,7 @@ export async function PUT(request: NextRequest) {
       body.agencies !== undefined ? setAgencies(body.agencies) : Promise.resolve(),
       body.sponsors !== undefined ? setSponsors(body.sponsors) : Promise.resolve(),
       body.tieups !== undefined ? setTieups(body.tieups) : Promise.resolve(),
+      body.marquee !== undefined ? setMarqueeSettings(body.marquee) : Promise.resolve(),
     ]);
     revalidatePath("/");
     revalidatePath("/en");

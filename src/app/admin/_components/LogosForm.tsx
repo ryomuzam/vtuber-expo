@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Agency, Sponsor, Tieup } from "@/lib/data";
+import type { Agency, Sponsor, Tieup, MarqueeSettings } from "@/lib/data";
 import MediaPicker from "./MediaPicker";
 
 type LogoItem = { id: string; name: string; logo?: string };
@@ -93,6 +93,7 @@ type Props = {
     agencies: Agency[];
     sponsors: Sponsor[];
     tieups: Tieup[];
+    marquee: MarqueeSettings;
   };
 };
 
@@ -101,6 +102,7 @@ export default function LogosForm({ initial }: Props) {
   const [agencies, setAgencies] = useState<Agency[]>(initial.agencies);
   const [sponsors, setSponsors] = useState<Sponsor[]>(initial.sponsors);
   const [tieups, setTieups] = useState<Tieup[]>(initial.tieups);
+  const [marquee, setMarquee] = useState<MarqueeSettings>(initial.marquee);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
@@ -112,7 +114,7 @@ export default function LogosForm({ initial }: Props) {
       const res = await fetch("/api/admin/logos", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ agencies, sponsors, tieups }),
+        body: JSON.stringify({ agencies, sponsors, tieups, marquee }),
       });
       if (!res.ok) {
         const data = await res.json();
@@ -134,6 +136,27 @@ export default function LogosForm({ initial }: Props) {
       {error && (
         <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">{error}</div>
       )}
+
+      {/* Marquee toggle */}
+      <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-5">
+        <div>
+          <p className="font-semibold text-gray-800">ロゴカルーセル</p>
+          <p className="text-sm text-gray-500">事務所・タイアップのロゴを流れるように表示します</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => setMarquee({ isPublic: !marquee.isPublic })}
+          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+            marquee.isPublic ? "bg-[#3D7FE0]" : "bg-gray-300"
+          }`}
+        >
+          <span
+            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+              marquee.isPublic ? "translate-x-6" : "translate-x-1"
+            }`}
+          />
+        </button>
+      </div>
 
       <LogoList title="事務所" items={agencies} onChange={setAgencies} />
       <LogoList title="協賛企業" items={sponsors} onChange={setSponsors} />

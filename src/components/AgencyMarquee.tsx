@@ -1,10 +1,7 @@
 import Image from "next/image";
-import { agencies } from "@/data/agencies";
+import type { Agency, Tieup } from "@/lib/data";
 
-// Split agencies into two rows
-const half = Math.ceil(agencies.length / 2);
-const row1 = agencies.slice(0, half);
-const row2 = agencies.slice(half);
+type LogoItem = { id: string; name: string; logo?: string };
 
 function LogoItem({ name, logo }: { name: string; logo?: string }) {
   return (
@@ -18,7 +15,7 @@ function LogoItem({ name, logo }: { name: string; logo?: string }) {
           className="h-auto max-h-9 w-auto max-w-full object-contain opacity-70 md:max-h-10"
         />
       ) : (
-        <span className="text-xs font-medium text-pop-muted/60">{name}</span>
+        <span className="text-xs font-medium text-gray-500">{name}</span>
       )}
     </div>
   );
@@ -28,14 +25,13 @@ function MarqueeRow({
   items,
   direction,
 }: {
-  items: typeof agencies;
+  items: LogoItem[];
   direction: "left" | "right";
 }) {
   const animClass = direction === "left" ? "animate-marquee-left" : "animate-marquee-right";
 
   return (
     <div className="relative flex overflow-hidden">
-      {/* Two copies for seamless loop */}
       <div className={`flex shrink-0 ${animClass}`}>
         {items.map((a) => (
           <LogoItem key={`a-${a.id}`} name={a.name} logo={a.logo} />
@@ -50,12 +46,24 @@ function MarqueeRow({
   );
 }
 
-export default function AgencyMarquee() {
+type Props = {
+  agencies: Agency[];
+  tieups: Tieup[];
+};
+
+export default function AgencyMarquee({ agencies, tieups }: Props) {
+  const allItems: LogoItem[] = [...agencies, ...tieups];
+  if (allItems.length === 0) return null;
+
+  const half = Math.ceil(allItems.length / 2);
+  const row1 = allItems.slice(0, half);
+  const row2 = allItems.slice(half);
+
   return (
     <section className="bg-white py-6 md:py-8">
       <div className="flex flex-col gap-3">
         <MarqueeRow items={row1} direction="left" />
-        <MarqueeRow items={row2} direction="right" />
+        {row2.length > 0 && <MarqueeRow items={row2} direction="right" />}
       </div>
     </section>
   );
