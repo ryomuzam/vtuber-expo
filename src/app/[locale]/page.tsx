@@ -21,9 +21,6 @@ export default async function HomePage({ params }: Props) {
 
       <div className="relative z-10 flex flex-col items-center gap-6">
         {/* Logo / Title */}
-        <p className="text-xs font-bold uppercase tracking-[0.4em] text-white/40">
-          produced by VEXZ
-        </p>
         <h1 className="text-4xl font-black text-white md:text-6xl lg:text-7xl">
           VTUBER EXPO 2026
         </h1>
@@ -38,7 +35,7 @@ export default async function HomePage({ params }: Props) {
         {/* Date & Venue */}
         <div className="mt-4 space-y-2 text-white/60">
           <p className="text-lg font-semibold text-white/80">
-            2026.5.3 SAT – 5.4 SUN
+            2026.5.3 SUN – 5.4 MON
           </p>
           <p className="text-sm">
             {locale === "ja" ? "ベルサール秋葉原" : "Bellesalle Akihabara"}
