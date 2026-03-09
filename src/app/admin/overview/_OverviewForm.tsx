@@ -6,9 +6,11 @@ import type { OverviewData } from "@/lib/data";
 const FIELDS: { key: keyof OverviewData["ja"]; labelJa: string }[] = [
   { key: "eventNameValue", labelJa: "イベント名" },
   { key: "dateValue", labelJa: "開催日時" },
+  { key: "hoursValue", labelJa: "開催時間" },
   { key: "venueValue", labelJa: "会場" },
   { key: "admissionValue", labelJa: "参加方法" },
   { key: "organizerValue", labelJa: "主催" },
+  { key: "coordinatorValue", labelJa: "幹事" },
 ];
 
 export default function OverviewForm({ initialData }: { initialData: OverviewData }) {

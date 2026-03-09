@@ -13,9 +13,11 @@ export type HeroSlide = {
 export type OverviewLocaleData = {
   eventNameValue: string;
   dateValue: string;
+  hoursValue: string;
   venueValue: string;
   admissionValue: string;
   organizerValue: string;
+  coordinatorValue: string;
 };
 
 export type OverviewData = {
@@ -32,16 +34,20 @@ const staticOverviewData: OverviewData = {
   ja: {
     eventNameValue: "VTUBER EXPO 2026",
     dateValue: "2026年5月3日(土) - 5月4日(日)",
+    hoursValue: "",
     venueValue: "ベルサール秋葉原 1階",
     admissionValue: "入場無料（一部有料プログラムあり）",
     organizerValue: "VEXZ",
+    coordinatorValue: "",
   },
   en: {
     eventNameValue: "VTUBER EXPO 2026",
     dateValue: "May 3 (Sat) - May 4 (Sun), 2026",
+    hoursValue: "",
     venueValue: "Bellesalle Akihabara 1F",
     admissionValue: "Free admission (some paid programs)",
     organizerValue: "VEXZ",
+    coordinatorValue: "",
   },
 };
 

@@ -41,12 +41,16 @@
     "eventNameValue": "VTUBER EXPO 2026",
     "date": "Date",
     "dateValue": "May 3 (Sat) - May 4 (Sun), 2026",
+    "hours": "Hours",
+    "hoursValue": "",
     "venue": "Venue",
     "venueValue": "Bellesalle Akihabara 1F",
     "admission": "Admission",
     "admissionValue": "Free admission (some paid programs)",
     "organizer": "Organizer",
-    "organizerValue": "VEXZ"
+    "organizerValue": "VEXZ",
+    "coordinator": "Coordinator",
+    "coordinatorValue": ""
   },
   "FreeAdmission": {
     "title": "FREE ADMISSION!",

@@ -14,13 +14,16 @@ export default async function OverviewSection() {
 
   const values = overviewData[locale as "ja" | "en"] ?? overviewData.ja;
 
-  const rows = [
+  const allRows = [
     { label: t("eventName"), value: values.eventNameValue },
     { label: t("date"), value: values.dateValue },
+    { label: t("hours"), value: values.hoursValue },
     { label: t("venue"), value: values.venueValue },
     { label: t("admission"), value: values.admissionValue },
     { label: t("organizer"), value: values.organizerValue },
+    { label: t("coordinator"), value: values.coordinatorValue },
   ];
+  const rows = allRows.filter((row) => row.value !== "");
 
   return (
     <section id="overview" className="relative overflow-hidden py-24">

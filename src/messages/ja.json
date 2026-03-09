@@ -41,12 +41,16 @@
     "eventNameValue": "VTUBER EXPO 2026",
     "date": "開催日時",
     "dateValue": "2026年5月3日(土) - 5月4日(日)",
+    "hours": "開催時間",
+    "hoursValue": "",
     "venue": "会場",
     "venueValue": "ベルサール秋葉原 1階",
     "admission": "参加方法",
     "admissionValue": "入場無料（一部有料プログラムあり）",
     "organizer": "主催",
-    "organizerValue": "VEXZ"
+    "organizerValue": "VEXZ",
+    "coordinator": "幹事",
+    "coordinatorValue": ""
   },
   "FreeAdmission": {
     "title": "入場無料！",
