@@ -1,5 +1,7 @@
 import { setRequestLocale } from "next-intl/server";
-import { getSocialLinks } from "@/lib/data";
+import { getSocialLinks, getVenueMapData, getEventScheduleData } from "@/lib/data";
+import VenueMapSection from "@/components/VenueMapSection";
+import EventScheduleSection from "@/components/EventScheduleSection";
 
 export const revalidate = 60;
 
@@ -11,7 +13,11 @@ export default async function HomePage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const socialLinks = await getSocialLinks();
+  const [socialLinks, venueMap, eventSchedule] = await Promise.all([
+    getSocialLinks(),
+    getVenueMapData(),
+    getEventScheduleData(),
+  ]);
 
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[#0a0a1a] px-4 text-center">
@@ -68,6 +74,17 @@ export default async function HomePage({ params }: Props) {
           </a>
         </div>
       </div>
+
+      {venueMap.isPublic && (
+        <div className="w-full">
+          <VenueMapSection data={venueMap} />
+        </div>
+      )}
+      {eventSchedule.isPublic && (
+        <div className="w-full bg-white">
+          <EventScheduleSection data={eventSchedule} />
+        </div>
+      )}
     </main>
   );
 }
