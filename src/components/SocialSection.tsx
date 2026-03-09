@@ -1,10 +1,14 @@
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import ScrollReveal from "./ScrollReveal";
 import ScrollParallax from "./ScrollParallax";
 import ParallaxText from "./ParallaxText";
+import { getSocialLinks } from "@/lib/data";
 
-export default function SocialSection() {
-  const t = useTranslations("Social");
+export default async function SocialSection() {
+  const [t, socialLinks] = await Promise.all([
+    getTranslations("Social"),
+    getSocialLinks(),
+  ]);
 
   return (
     <section className="relative overflow-hidden bg-main-gradient py-20 md:py-28">
@@ -46,7 +50,7 @@ export default function SocialSection() {
           <div className="flex flex-col items-center justify-center gap-6 sm:flex-row sm:gap-8">
             {/* X (Twitter) Button */}
             <a
-              href="https://x.com/VTUBEREXPO2026"
+              href={socialLinks.xUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="group flex w-full flex-col items-center justify-center gap-4 rounded-3xl bg-black px-12 py-10 shadow-xl transition-all hover:-translate-y-2 hover:shadow-2xl sm:w-64 md:w-72"
@@ -59,7 +63,7 @@ export default function SocialSection() {
 
             {/* YouTube Button */}
             <a
-              href="https://www.youtube.com/@VTUBEREXPO"
+              href={socialLinks.youtubeUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="group flex w-full flex-col items-center justify-center gap-4 rounded-3xl bg-[#FF0000] px-12 py-10 shadow-xl transition-all hover:-translate-y-2 hover:shadow-2xl sm:w-64 md:w-72"

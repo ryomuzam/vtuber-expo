@@ -10,6 +10,46 @@ export type HeroSlide = {
   src: string;
 };
 
+export type OverviewLocaleData = {
+  eventNameValue: string;
+  dateValue: string;
+  venueValue: string;
+  admissionValue: string;
+  organizerValue: string;
+};
+
+export type OverviewData = {
+  ja: OverviewLocaleData;
+  en: OverviewLocaleData;
+};
+
+export type SocialLinks = {
+  xUrl: string;
+  youtubeUrl: string;
+};
+
+const staticOverviewData: OverviewData = {
+  ja: {
+    eventNameValue: "VTUBER EXPO 2026",
+    dateValue: "2026年5月3日(土) - 5月4日(日)",
+    venueValue: "ベルサール秋葉原 1階",
+    admissionValue: "入場無料（一部有料プログラムあり）",
+    organizerValue: "VEXZ",
+  },
+  en: {
+    eventNameValue: "VTUBER EXPO 2026",
+    dateValue: "May 3 (Sat) - May 4 (Sun), 2026",
+    venueValue: "Bellesalle Akihabara 1F",
+    admissionValue: "Free admission (some paid programs)",
+    organizerValue: "VEXZ",
+  },
+};
+
+const staticSocialLinks: SocialLinks = {
+  xUrl: "https://x.com/VTUBEREXPO2026",
+  youtubeUrl: "https://www.youtube.com/@VTUBEREXPO",
+};
+
 const staticHeroSlides: HeroSlide[] = [
   { id: 1, label: "Key Visual 1", src: "/images/hero/kv1.png" },
   { id: 2, label: "Key Visual 2", src: "/images/hero/kv1.png" },
@@ -117,4 +157,32 @@ export async function setTieups(list: Tieup[]): Promise<void> {
   const kv = await getKV();
   if (!kv) throw new Error("KV not configured");
   await kv.set("logos:tieups", list);
+}
+
+// Overview
+export async function getOverviewData(): Promise<OverviewData> {
+  const kv = await getKV();
+  if (!kv) return staticOverviewData;
+  const data = await kv.get<OverviewData>("overview:data");
+  return data ?? staticOverviewData;
+}
+
+export async function setOverviewData(data: OverviewData): Promise<void> {
+  const kv = await getKV();
+  if (!kv) throw new Error("KV not configured");
+  await kv.set("overview:data", data);
+}
+
+// Social Links
+export async function getSocialLinks(): Promise<SocialLinks> {
+  const kv = await getKV();
+  if (!kv) return staticSocialLinks;
+  const data = await kv.get<SocialLinks>("social:links");
+  return data ?? staticSocialLinks;
+}
+
+export async function setSocialLinks(links: SocialLinks): Promise<void> {
+  const kv = await getKV();
+  if (!kv) throw new Error("KV not configured");
+  await kv.set("social:links", links);
 }

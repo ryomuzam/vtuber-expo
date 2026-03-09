@@ -1,18 +1,25 @@
-import { useTranslations } from "next-intl";
+import { getTranslations, getLocale } from "next-intl/server";
 import SectionTitle from "./SectionTitle";
 import ScrollReveal from "./ScrollReveal";
 import ScrollParallax from "./ScrollParallax";
 import ParallaxText from "./ParallaxText";
+import { getOverviewData } from "@/lib/data";
 
-export default function OverviewSection() {
-  const t = useTranslations("Overview");
+export default async function OverviewSection() {
+  const [t, locale, overviewData] = await Promise.all([
+    getTranslations("Overview"),
+    getLocale(),
+    getOverviewData(),
+  ]);
+
+  const values = overviewData[locale as "ja" | "en"] ?? overviewData.ja;
 
   const rows = [
-    { label: t("eventName"), value: t("eventNameValue") },
-    { label: t("date"), value: t("dateValue") },
-    { label: t("venue"), value: t("venueValue") },
-    { label: t("admission"), value: t("admissionValue") },
-    { label: t("organizer"), value: t("organizerValue") },
+    { label: t("eventName"), value: values.eventNameValue },
+    { label: t("date"), value: values.dateValue },
+    { label: t("venue"), value: values.venueValue },
+    { label: t("admission"), value: values.admissionValue },
+    { label: t("organizer"), value: values.organizerValue },
   ];
 
   return (
