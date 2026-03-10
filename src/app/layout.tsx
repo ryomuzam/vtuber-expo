@@ -31,8 +31,8 @@ export default function RootLayout({
   return (
     <html suppressHydrationWarning>
       <head>
-        <link rel="icon" href="/site-icon.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/site-icon.png" />
+        <link rel="icon" href="/images/site-icon.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/images/site-icon.png" />
         <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} />
         <script
           dangerouslySetInnerHTML={{
