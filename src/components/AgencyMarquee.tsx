@@ -52,7 +52,7 @@ type Props = {
 };
 
 export default function AgencyMarquee({ agencies, tieups }: Props) {
-  const allItems: LogoItem[] = [...agencies, ...tieups];
+  const allItems: LogoItem[] = [...agencies, ...tieups].filter((item) => (item as { isPublic?: boolean }).isPublic !== false);
   if (allItems.length === 0) return null;
 
   const half = Math.ceil(allItems.length / 2);

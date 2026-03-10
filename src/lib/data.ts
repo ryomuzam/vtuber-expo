@@ -25,9 +25,20 @@ export type OverviewData = {
   en: OverviewLocaleData;
 };
 
+export type SocialLinkItem = {
+  id: string;
+  platform: string;
+  url: string;
+  isPublic: boolean;
+};
+
 export type SocialLinks = {
-  xUrl: string;
-  youtubeUrl: string;
+  isPublic: boolean;
+  items: SocialLinkItem[];
+  /** @deprecated — kept for backward compatibility migration */
+  xUrl?: string;
+  /** @deprecated — kept for backward compatibility migration */
+  youtubeUrl?: string;
 };
 
 const staticOverviewData: OverviewData = {
@@ -52,8 +63,11 @@ const staticOverviewData: OverviewData = {
 };
 
 const staticSocialLinks: SocialLinks = {
-  xUrl: "https://x.com/VTUBEREXPO2026",
-  youtubeUrl: "https://www.youtube.com/@VTUBEREXPO",
+  isPublic: true,
+  items: [
+    { id: "x", platform: "x", url: "https://x.com/VTUBEREXPO2026", isPublic: true },
+    { id: "youtube", platform: "youtube", url: "https://www.youtube.com/@VTUBEREXPO", isPublic: true },
+  ],
 };
 
 const staticHeroSlides: HeroSlide[] = [
@@ -184,7 +198,19 @@ export async function getSocialLinks(): Promise<SocialLinks> {
   const kv = await getKV();
   if (!kv) return staticSocialLinks;
   const data = await kv.get<SocialLinks>("social:links");
-  return data ?? staticSocialLinks;
+  if (!data) return staticSocialLinks;
+  // Migrate old format (xUrl/youtubeUrl only, no items)
+  if (!data.items) {
+    const migrated: SocialLinks = {
+      isPublic: data.isPublic ?? true,
+      items: [
+        { id: "x", platform: "x", url: data.xUrl ?? "", isPublic: true },
+        { id: "youtube", platform: "youtube", url: data.youtubeUrl ?? "", isPublic: true },
+      ],
+    };
+    return migrated;
+  }
+  return { ...data, isPublic: data.isPublic ?? true };
 }
 
 export async function setSocialLinks(links: SocialLinks): Promise<void> {
@@ -194,13 +220,19 @@ export async function setSocialLinks(links: SocialLinks): Promise<void> {
 }
 
 // Venue Map
-export type BoothType = "booth" | "stage" | "entrance" | "goods" | "food" | "other";
+export type PinCategory = {
+  id: string;
+  name: string;
+  color: string;
+};
 
 export type VenueBooth = {
   id: string;
   name: string;
-  type: BoothType;
+  categoryId: string;
   description: string;
+  logoUrl?: string;
+  url?: string;
   x: number;
   y: number;
 };
@@ -208,43 +240,33 @@ export type VenueBooth = {
 export type VenueMapData = {
   isPublic: boolean;
   mapImageUrl: string;
+  pinCategories: PinCategory[];
   booths: VenueBooth[];
 };
+
+const defaultPinCategories: PinCategory[] = [
+  { id: "booth", name: "展示ブース", color: "#3D7FE0" },
+  { id: "stage", name: "ステージ", color: "#E040FB" },
+  { id: "entrance", name: "エントランス", color: "#22c55e" },
+  { id: "goods", name: "グッズ", color: "#a855f7" },
+  { id: "food", name: "フード", color: "#f97316" },
+  { id: "other", name: "その他", color: "#6b7280" },
+];
 
 const staticVenueMapData: VenueMapData = {
   isPublic: false,
   mapImageUrl: "/images/venue/floor-plan.svg",
-  booths: [
-    { id: "b01", name: "B01", type: "booth", description: "", x: 10.6, y: 34.2 },
-    { id: "b02", name: "B02", type: "booth", description: "", x: 24.4, y: 34.2 },
-    { id: "b03", name: "B03", type: "booth", description: "", x: 38.1, y: 34.2 },
-    { id: "b04", name: "B04", type: "booth", description: "", x: 10.6, y: 49.2 },
-    { id: "b05", name: "B05", type: "booth", description: "", x: 24.4, y: 49.2 },
-    { id: "b06", name: "B06", type: "booth", description: "", x: 38.1, y: 49.2 },
-    { id: "b07", name: "B07", type: "booth", description: "", x: 10.6, y: 64.2 },
-    { id: "b08", name: "B08", type: "booth", description: "", x: 24.4, y: 64.2 },
-    { id: "b09", name: "B09", type: "booth", description: "", x: 38.1, y: 64.2 },
-    { id: "b10", name: "B10", type: "booth", description: "", x: 61.9, y: 34.2 },
-    { id: "b11", name: "B11", type: "booth", description: "", x: 75.6, y: 34.2 },
-    { id: "b12", name: "B12", type: "booth", description: "", x: 89.4, y: 34.2 },
-    { id: "b13", name: "B13", type: "booth", description: "", x: 61.9, y: 49.2 },
-    { id: "b14", name: "B14", type: "booth", description: "", x: 75.6, y: 49.2 },
-    { id: "b15", name: "B15", type: "booth", description: "", x: 89.4, y: 49.2 },
-    { id: "b16", name: "B16", type: "booth", description: "", x: 61.9, y: 64.2 },
-    { id: "b17", name: "B17", type: "booth", description: "", x: 75.6, y: 64.2 },
-    { id: "b18", name: "B18", type: "booth", description: "", x: 89.4, y: 64.2 },
-    { id: "stage", name: "MAIN STAGE", type: "stage", description: "メインステージエリア", x: 50, y: 13.3 },
-    { id: "goods", name: "グッズ売り場", type: "goods", description: "限定グッズ販売", x: 14.8, y: 82.5 },
-    { id: "entrance", name: "エントランス", type: "entrance", description: "入退場口", x: 50, y: 82.5 },
-    { id: "food", name: "フードコート", type: "food", description: "フード・ドリンク販売", x: 85.4, y: 82.5 },
-  ],
+  pinCategories: defaultPinCategories,
+  booths: [],
 };
 
 export async function getVenueMapData(): Promise<VenueMapData> {
   const kv = await getKV();
   if (!kv) return staticVenueMapData;
   const data = await kv.get<VenueMapData>("venue:map");
-  return data ?? staticVenueMapData;
+  if (!data) return staticVenueMapData;
+  // 旧データに pinCategories がない場合のフォールバック
+  return { ...data, pinCategories: data.pinCategories ?? defaultPinCategories };
 }
 
 export async function setVenueMapData(data: VenueMapData): Promise<void> {
@@ -260,14 +282,19 @@ export type ScheduleSlot = {
   startTime: string;
   endTime: string;
   title: string;
+  titleEn?: string;
   performers: string;
+  performersEn?: string;
   description: string;
+  descriptionEn?: string;
 };
 
 export type EventScheduleData = {
   isPublic: boolean;
   day1Label: string;
+  day1LabelEn?: string;
   day2Label: string;
+  day2LabelEn?: string;
   items: ScheduleSlot[];
 };
 
@@ -354,6 +381,324 @@ export async function setSponsorPageData(data: SponsorPageData): Promise<void> {
   const kv = await getKV();
   if (!kv) throw new Error("KV not configured");
   await kv.set("sponsor:page", data);
+}
+
+// Privacy Policy
+export type PrivacyPolicyData = {
+  content: string;
+  updatedAt: string;
+};
+
+export async function getPrivacyPolicyData(): Promise<PrivacyPolicyData> {
+  const kv = await getKV();
+  if (!kv) return { content: "", updatedAt: "" };
+  const data = await kv.get<PrivacyPolicyData>("privacy:policy");
+  return data ?? { content: "", updatedAt: "" };
+}
+
+export async function setPrivacyPolicyData(data: PrivacyPolicyData): Promise<void> {
+  const kv = await getKV();
+  if (!kv) throw new Error("KV not configured");
+  await kv.set("privacy:policy", data);
+}
+
+// Ticket
+export type TicketItem = {
+  id: string;
+  name: string;
+  nameEn?: string;
+  price: string;
+  priceEn?: string;
+  description: string;
+  descriptionEn?: string;
+  purchaseUrl: string;
+  isSoldOut?: boolean;
+};
+
+export type TicketData = {
+  isPublic: boolean;
+  floatingButtonEnabled: boolean;
+  note: string;
+  noteEn?: string;
+  items: TicketItem[];
+};
+
+const staticTicketData: TicketData = {
+  isPublic: false,
+  floatingButtonEnabled: false,
+  note: "",
+  items: [],
+};
+
+export async function getTicketData(): Promise<TicketData> {
+  const kv = await getKV();
+  if (!kv) return staticTicketData;
+  const data = await kv.get<TicketData>("ticket:data");
+  return data ?? staticTicketData;
+}
+
+export async function setTicketData(data: TicketData): Promise<void> {
+  const kv = await getKV();
+  if (!kv) throw new Error("KV not configured");
+  await kv.set("ticket:data", data);
+}
+
+// Contact Form
+export type ContactInquiry = {
+  id: string;
+  email: string;
+  inquiryType: string;
+  message: string;
+  createdAt: string;
+  isRead: boolean;
+};
+
+export type ContactSettings = {
+  isPublic: boolean;
+  notifyEmail: string;
+  inquiryTypes: string[];
+};
+
+const defaultInquiryTypes = [
+  "出展・ブース出展に関するお問い合わせ",
+  "来場・チケットに関するお問い合わせ",
+  "取材・メディアに関するお問い合わせ",
+  "スポンサーシップに関するお問い合わせ",
+  "コラボレーション・タイアップに関するお問い合わせ",
+  "その他のお問い合わせ",
+];
+
+export async function getContactSettings(): Promise<ContactSettings> {
+  const kv = await getKV();
+  if (!kv) return { isPublic: false, notifyEmail: "", inquiryTypes: defaultInquiryTypes };
+  const data = await kv.get<ContactSettings>("contact:settings");
+  if (!data) return { isPublic: false, notifyEmail: "", inquiryTypes: defaultInquiryTypes };
+  // 旧データに inquiryTypes がない場合のフォールバック
+  return { ...data, inquiryTypes: data.inquiryTypes ?? defaultInquiryTypes };
+}
+
+export async function setContactSettings(data: ContactSettings): Promise<void> {
+  const kv = await getKV();
+  if (!kv) throw new Error("KV not configured");
+  await kv.set("contact:settings", data);
+}
+
+export async function getContactInquiries(): Promise<ContactInquiry[]> {
+  const kv = await getKV();
+  if (!kv) return [];
+  const data = await kv.get<ContactInquiry[]>("contact:inquiries");
+  return data ?? [];
+}
+
+export async function addContactInquiry(inquiry: Pick<ContactInquiry, "email" | "inquiryType" | "message">): Promise<void> {
+  const kv = await getKV();
+  if (!kv) throw new Error("KV not configured");
+  const list = await getContactInquiries();
+  const newItem: ContactInquiry = {
+    ...inquiry,
+    id: Date.now().toString(),
+    createdAt: new Date().toISOString(),
+    isRead: false,
+  };
+  await kv.set("contact:inquiries", [newItem, ...list]);
+}
+
+export async function markContactInquiryRead(id: string): Promise<void> {
+  const kv = await getKV();
+  if (!kv) throw new Error("KV not configured");
+  const list = await getContactInquiries();
+  const updated = list.map((item) => (item.id === id ? { ...item, isRead: true } : item));
+  await kv.set("contact:inquiries", updated);
+}
+
+export async function deleteContactInquiry(id: string): Promise<void> {
+  const kv = await getKV();
+  if (!kv) throw new Error("KV not configured");
+  const list = await getContactInquiries();
+  await kv.set("contact:inquiries", list.filter((item) => item.id !== id));
+}
+
+// About Intro Section
+export type AboutIntroData = {
+  isPublic: boolean;
+  sectionTitleJa: string;
+  sectionTitleEn: string;
+  leadCopyJa: string;
+  leadCopyEn: string;
+};
+
+// About Cards Section
+export type AboutCardData = {
+  titleJa: string;
+  titleEn: string;
+  labelJa?: string;
+  labelEn?: string;
+  descJa: string;
+  descEn: string;
+  iconUrl?: string;
+};
+
+export type AboutData = {
+  isPublic: boolean;
+  sectionTitleJa: string;
+  sectionTitleEn: string;
+  leadCopyJa: string;
+  leadCopyEn: string;
+  cards: AboutCardData[];
+};
+
+const staticAboutIntroData: AboutIntroData = {
+  isPublic: true,
+  sectionTitleJa: "世界初開催！",
+  sectionTitleEn: "World's First!",
+  leadCopyJa: "世界初!?VTuberに特化した博覧会が、GWの秋葉原に誕生!\n展示、ステージ、体験コーナー全てがVTuber!\nVが大好きなあなたも、これから好きになるあなたも\nみんなで楽しめるイベントです！",
+  leadCopyEn: "The world's first VTuber-dedicated expo is coming to Akihabara during Golden Week!\nExhibitions, stages, hands-on experiences — everything is VTuber!\nWhether you already love VTubers or are just getting started,\nthis is an event everyone can enjoy!",
+};
+
+const staticAboutData: AboutData = {
+  isPublic: true,
+  sectionTitleJa: "世界初開催！",
+  sectionTitleEn: "World's First!",
+  leadCopyJa: "世界初!?VTuberに特化した博覧会が、GWの秋葉原に誕生!\n展示、ステージ、体験コーナー全てがVTuber!\nVが大好きなあなたも、これから好きになるあなたも\nみんなで楽しめるイベントです！",
+  leadCopyEn: "The world's first VTuber-dedicated expo is coming to Akihabara during Golden Week!\nExhibitions, stages, hands-on experiences — everything is VTuber!\nWhether you already love VTubers or are just getting started,\nthis is an event everyone can enjoy!",
+  cards: [
+    {
+      titleJa: "「なれる」",
+      titleEn: "\"Become\"",
+      labelJa: "VTuberに",
+      labelEn: "With VTubers",
+      descJa: "最先端のモーションキャプチャ体験！\nその場であなたがVTuberに!?",
+      descEn: "Experience cutting-edge motion capture!\nBecome a VTuber on the spot!?",
+    },
+    {
+      titleJa: "「話せる」",
+      titleEn: "\"Talk\"",
+      labelJa: "VTuberと",
+      labelEn: "With VTubers",
+      descJa: "VTuberとお話ししてみませんか？\nお金を使わずに投げ銭体験もできちゃう!?",
+      descEn: "Chat with VTubers!\nTry the virtual tipping experience for free!?",
+    },
+    {
+      titleJa: "「遊べる」",
+      titleEn: "\"Play\"",
+      labelJa: "VTuberと",
+      labelEn: "With VTubers",
+      descJa: "特設ステージでミニライブやトークショー\n発表会など楽しい企画が目白押し！",
+      descEn: "Mini-lives, talk shows, presentations\nand more fun events at the special stage!",
+    },
+    {
+      titleJa: "「知れる」",
+      titleEn: "\"Discover\"",
+      labelJa: "VTuberを",
+      labelEn: "About VTubers",
+      descJa: "人気VTuberやプロダクション、\n関連企業の展示が盛りだくさん！",
+      descEn: "Packed with exhibits from popular VTubers,\nproductions, and related companies!",
+    },
+  ],
+};
+
+export async function getAboutIntroData(): Promise<AboutIntroData> {
+  const kv = await getKV();
+  if (!kv) return staticAboutIntroData;
+  const data = await kv.get<AboutIntroData>("about:intro");
+  return data ?? staticAboutIntroData;
+}
+
+export async function setAboutIntroData(data: AboutIntroData): Promise<void> {
+  const kv = await getKV();
+  if (!kv) throw new Error("KV not configured");
+  await kv.set("about:intro", data);
+}
+
+export async function getAboutData(): Promise<AboutData> {
+  const kv = await getKV();
+  if (!kv) return staticAboutData;
+  const data = await kv.get<AboutData>("about:data");
+  if (!data) return staticAboutData;
+  return { ...staticAboutData, ...data, isPublic: data.isPublic ?? true };
+}
+
+export async function setAboutData(data: AboutData): Promise<void> {
+  const kv = await getKV();
+  if (!kv) throw new Error("KV not configured");
+  await kv.set("about:data", data);
+}
+
+// VTuber Wall
+export type VTuberWallData = {
+  isPublic: boolean;
+  backgroundImageUrl?: string;
+  bannerImageUrl: string;
+  formUrl: string;
+  titleJa: string;
+  titleEn: string;
+  subtitleJa: string;
+  subtitleEn: string;
+  descriptionJa: string;
+  descriptionEn: string;
+  buttonLabelJa: string;
+  buttonLabelEn: string;
+  deadlineJa: string;
+  deadlineEn: string;
+};
+
+const staticVTuberWallData: VTuberWallData = {
+  isPublic: false,
+  bannerImageUrl: "",
+  formUrl: "",
+  titleJa: "VTuberウォール 募集開始！",
+  titleEn: "VTuber Wall — Now Accepting Applications!",
+  subtitleJa: "参加型企画",
+  subtitleEn: "Participatory Project",
+  descriptionJa: "あなたのアイコンが秋葉原に！VTuber・Vライバーとして活動されている方なら誰でも参加OK。ご自身の活動アイコン画像を提供いただき、会場の巨大ウォールに掲出します。",
+  descriptionEn: "Your icon in Akihabara! Open to all active VTubers and VLivers. Submit your activity icon to be featured on the giant wall at the venue.",
+  buttonLabelJa: "応募フォームはこちら",
+  buttonLabelEn: "Apply Here",
+  deadlineJa: "募集期間：2026年3月末日まで",
+  deadlineEn: "Deadline: End of March 2026",
+};
+
+export async function getVTuberWallData(): Promise<VTuberWallData> {
+  const kv = await getKV();
+  if (!kv) return staticVTuberWallData;
+  const data = await kv.get<VTuberWallData>("vtuber:wall");
+  return data ?? staticVTuberWallData;
+}
+
+export async function setVTuberWallData(data: VTuberWallData): Promise<void> {
+  const kv = await getKV();
+  if (!kv) throw new Error("KV not configured");
+  await kv.set("vtuber:wall", data);
+}
+
+// Floating Characters
+export type FloatingChar = {
+  id: string;
+  name: string;
+  imageUrl: string;
+};
+
+export type FloatingCharsData = {
+  isPublic: boolean;
+  chars: FloatingChar[];
+};
+
+const staticFloatingCharsData: FloatingCharsData = {
+  isPublic: false,
+  chars: [],
+};
+
+export async function getFloatingCharsData(): Promise<FloatingCharsData> {
+  const kv = await getKV();
+  if (!kv) return staticFloatingCharsData;
+  const data = await kv.get<FloatingCharsData>("floating:chars");
+  return data ?? staticFloatingCharsData;
+}
+
+export async function setFloatingCharsData(data: FloatingCharsData): Promise<void> {
+  const kv = await getKV();
+  if (!kv) throw new Error("KV not configured");
+  await kv.set("floating:chars", data);
 }
 
 // X Share tracking

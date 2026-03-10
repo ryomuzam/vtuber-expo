@@ -26,15 +26,11 @@ export default async function OverviewSection() {
   const rows = allRows.filter((row) => row.value !== "");
 
   return (
-    <section id="overview" className="relative overflow-hidden py-24">
+    <section id="overview" className="relative overflow-hidden py-16 md:py-20">
       {/* Background decorations */}
       <div className="deco-blob left-[-12%] top-[20%] h-[350px] w-[350px] bg-accent-blue/25" />
       <div className="deco-blob right-[-10%] bottom-[15%] h-[280px] w-[280px] bg-accent-magenta/20" />
 
-      {/* Deco — star right, ball left */}
-      <ScrollParallax speed={-0.12} className="pointer-events-none absolute -right-6 top-[30%] z-0">
-        <img src="/images/deco/star.png" alt="" aria-hidden="true" className="w-16 rotate-12 opacity-50 md:w-28" />
-      </ScrollParallax>
       <ScrollParallax speed={0.1} className="pointer-events-none absolute -left-4 bottom-[25%] z-0">
         <img src="/images/deco/ball.png" alt="" aria-hidden="true" className="w-12 opacity-40 md:w-20" />
       </ScrollParallax>

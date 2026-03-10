@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import type { Agency, Sponsor, Tieup, MarqueeSettings } from "@/lib/data";
 import MediaPicker from "./MediaPicker";
 
-type LogoItem = { id: string; name: string; logo?: string };
+type LogoItem = { id: string; name: string; logo?: string; isPublic?: boolean };
 
 function LogoList({
   title,
@@ -20,8 +20,16 @@ function LogoList({
     onChange(items.map((item, i) => (i === index ? { ...item, [field]: value } : item)));
   }
 
+  function togglePublic(index: number) {
+    onChange(
+      items.map((item, i) =>
+        i === index ? { ...item, isPublic: item.isPublic === false ? true : false } : item
+      )
+    );
+  }
+
   function addItem() {
-    onChange([...items, { id: `item-${Date.now()}`, name: "", logo: "" }]);
+    onChange([...items, { id: `item-${Date.now()}`, name: "", logo: "", isPublic: true }]);
   }
 
   function removeItem(index: number) {
@@ -32,32 +40,52 @@ function LogoList({
     <div className="rounded-xl border border-gray-200 bg-white p-5">
       <h3 className="mb-4 text-base font-semibold text-gray-800">{title}</h3>
       <div className="space-y-4">
-        {items.map((item, i) => (
-          <div key={i} className="rounded-lg border border-gray-100 bg-gray-50 p-3">
-            <div className="mb-2 grid grid-cols-2 gap-2">
-              <div>
-                <label className="label">ID</label>
-                <input
-                  type="text"
-                  value={item.id}
-                  onChange={(e) => update(i, "id", e.target.value)}
-                  className="input font-mono text-xs"
-                  placeholder="hololive"
-                />
+        {items.map((item, i) => {
+          const isPublic = item.isPublic !== false;
+          return (
+            <div key={i} className={`rounded-lg border border-gray-100 p-3 ${isPublic ? "bg-gray-50" : "bg-gray-50/50 opacity-60"}`}>
+              <div className="mb-2 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => togglePublic(i)}
+                    className={`relative h-6 w-11 rounded-full transition-colors ${isPublic ? "bg-[#3D7FE0]" : "bg-gray-300"}`}
+                    title={isPublic ? "公開中" : "非公開"}
+                  >
+                    <span className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${isPublic ? "translate-x-5" : ""}`} />
+                  </button>
+                  <span className="text-xs text-gray-400">{isPublic ? "公開" : "非公開"}</span>
+                </div>
+                <button
+                  onClick={() => removeItem(i)}
+                  className="shrink-0 rounded-md bg-red-50 px-2 py-1 text-xs text-red-500 hover:bg-red-100"
+                >
+                  削除
+                </button>
+              </div>
+              <div className="mb-2 grid grid-cols-2 gap-2">
+                <div>
+                  <label className="label">ID</label>
+                  <input
+                    type="text"
+                    value={item.id}
+                    onChange={(e) => update(i, "id", e.target.value)}
+                    className="input font-mono text-xs"
+                    placeholder="hololive"
+                  />
+                </div>
+                <div>
+                  <label className="label">名前</label>
+                  <input
+                    type="text"
+                    value={item.name}
+                    onChange={(e) => update(i, "name", e.target.value)}
+                    className="input text-sm"
+                    placeholder="ホロライブプロダクション"
+                  />
+                </div>
               </div>
               <div>
-                <label className="label">名前</label>
-                <input
-                  type="text"
-                  value={item.name}
-                  onChange={(e) => update(i, "name", e.target.value)}
-                  className="input text-sm"
-                  placeholder="ホロライブプロダクション"
-                />
-              </div>
-            </div>
-            <div className="flex items-start gap-2">
-              <div className="flex-1">
                 <label className="label">ロゴ画像</label>
                 <MediaPicker
                   value={item.logo ?? ""}
@@ -65,15 +93,9 @@ function LogoList({
                   placeholder="/images/agencies/..."
                 />
               </div>
-              <button
-                onClick={() => removeItem(i)}
-                className="mt-5 shrink-0 rounded-md bg-red-50 px-2 py-1.5 text-xs text-red-500 hover:bg-red-100"
-              >
-                削除
-              </button>
             </div>
-          </div>
-        ))}
+          );
+        })}
         {items.length === 0 && (
           <p className="text-sm text-gray-400">エントリがありません</p>
         )}

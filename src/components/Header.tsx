@@ -2,8 +2,13 @@ import Image from "next/image";
 import { useTranslations, useLocale } from "next-intl";
 import LanguageToggle from "./LanguageToggle";
 import MobileMenu from "./MobileMenu";
+import NavLink from "./NavLink";
 
-export default function Header() {
+type Props = {
+  schedulePublic?: boolean;
+};
+
+export default function Header({ schedulePublic = false }: Props) {
   const t = useTranslations("Header");
   const locale = useLocale();
 
@@ -11,9 +16,8 @@ export default function Header() {
     { key: "whatis", href: `/${locale}#about` },
     { key: "news", href: `/${locale}#news` },
     { key: "overview", href: `/${locale}#overview` },
-    { key: "lineup", href: `/${locale}#lineup` },
-    { key: "schedule", href: `/${locale}#schedule` },
-  ] as const;
+    ...(schedulePublic ? [{ key: "schedule" as const, href: `/${locale}#schedule` }] : []),
+  ];
 
   return (
     <header className="fixed top-0 z-50 w-full border-b border-gray-200/60 bg-white/90 shadow-md shadow-black/5 backdrop-blur-md">
@@ -34,20 +38,20 @@ export default function Header() {
         <div className="hidden flex-col items-end gap-2 md:flex">
           <nav className="flex items-center gap-2">
             {navItems.map((item) => (
-              <a
+              <NavLink
                 key={item.key}
                 href={item.href}
                 className="nav-slide px-3 py-1 text-sm font-bold tracking-wider text-gray-700 transition-colors duration-300 hover:text-[#3D7FE0]"
               >
                 <span className="relative z-10">{t(item.key)}</span>
-              </a>
+              </NavLink>
             ))}
           </nav>
           <LanguageToggle />
         </div>
 
         {/* Mobile */}
-        <MobileMenu />
+        <MobileMenu schedulePublic={schedulePublic} />
       </div>
     </header>
   );

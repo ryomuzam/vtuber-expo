@@ -3,8 +3,13 @@
 import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import LanguageToggle from "./LanguageToggle";
+import NavLink from "./NavLink";
 
-export default function MobileMenu() {
+type Props = {
+  schedulePublic?: boolean;
+};
+
+export default function MobileMenu({ schedulePublic = false }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const t = useTranslations("Header");
   const locale = useLocale();
@@ -13,9 +18,8 @@ export default function MobileMenu() {
     { key: "whatis", href: `/${locale}#about` },
     { key: "news", href: `/${locale}#news` },
     { key: "overview", href: `/${locale}#overview` },
-    { key: "lineup", href: `/${locale}#lineup` },
-    { key: "schedule", href: `/${locale}#schedule` },
-  ] as const;
+    ...(schedulePublic ? [{ key: "schedule" as const, href: `/${locale}#schedule` }] : []),
+  ];
 
   return (
     <div className="md:hidden">
@@ -41,7 +45,7 @@ export default function MobileMenu() {
       >
         <div className="flex flex-1 flex-col items-center justify-center gap-7">
           {navItems.map((item, i) => (
-            <a
+            <NavLink
               key={item.key}
               href={item.href}
               onClick={() => setIsOpen(false)}
@@ -51,7 +55,7 @@ export default function MobileMenu() {
               style={{ transitionDelay: isOpen ? `${i * 50}ms` : "0ms" }}
             >
               {t(item.key)}
-            </a>
+            </NavLink>
           ))}
         </div>
 

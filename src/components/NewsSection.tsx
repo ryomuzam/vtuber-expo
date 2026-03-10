@@ -29,18 +29,11 @@ export default function NewsSection({ news }: Props) {
   const localePath = locale === "ja" ? "" : "/en";
 
   return (
-    <section id="news" className="relative overflow-hidden bg-[#3D7FE0] py-24">
+    <section id="news" className="relative overflow-hidden bg-[#3D7FE0] py-16 md:py-20">
       {/* Background decorations */}
       <div className="deco-blob right-[-5%] top-[15%] h-[300px] w-[300px] bg-white/10" />
       <div className="deco-blob left-[5%] bottom-[10%] h-[250px] w-[250px] bg-white/10" />
 
-      {/* Deco — ball left, star right-bottom */}
-      <ScrollParallax speed={0.15} className="pointer-events-none absolute -left-6 top-[25%] z-0">
-        <img src="/images/deco/ball.png" alt="" aria-hidden="true" className="w-20 opacity-40 md:w-32" />
-      </ScrollParallax>
-      <ScrollParallax speed={-0.1} className="pointer-events-none absolute -right-4 bottom-[20%] z-0">
-        <img src="/images/deco/star.png" alt="" aria-hidden="true" className="w-14 opacity-50 md:w-20" />
-      </ScrollParallax>
 
       {/* Parallax background text */}
       <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
@@ -74,12 +67,12 @@ export default function NewsSection({ news }: Props) {
               >
                 <div className="card-hover flex h-[360px] flex-col overflow-hidden rounded-2xl bg-white shadow-sm transition-shadow hover:shadow-lg sm:h-[380px]">
                   {/* Image */}
-                  <div className="relative aspect-[16/10] shrink-0 overflow-hidden">
+                  <div className="relative aspect-[16/10] shrink-0 overflow-hidden bg-gray-50">
                     <Image
-                      src="/images/news/vtuberexpo_news.png"
+                      src={item.image || "/images/news/vtuberexpo_news.png"}
                       alt={locale === "ja" ? item.title.ja : item.title.en}
                       fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      className={`transition-transform duration-300 group-hover:scale-105 ${item.image ? "object-contain" : "object-cover"}`}
                     />
                   </div>
                   {/* Content */}

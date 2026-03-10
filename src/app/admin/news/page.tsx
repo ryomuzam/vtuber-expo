@@ -4,9 +4,12 @@ import AdminNav from "../_components/AdminNav";
 import Link from "next/link";
 import { getNews } from "@/lib/data";
 import NewsDeleteButton from "./_components/NewsDeleteButton";
+import NewsPublicToggle from "./_components/NewsPublicToggle";
+import NewsReorderButtons from "./_components/NewsReorderButtons";
 
 export default async function NewsListPage() {
   const news = await getNews();
+  const allSlugs = news.map((n) => n.slug);
 
   return (
     <div className="flex h-screen">
@@ -26,6 +29,8 @@ export default async function NewsListPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-100 text-left text-xs font-semibold uppercase tracking-wide text-gray-400">
+                  <th className="px-6 py-3">順序</th>
+                  <th className="px-6 py-3">公開</th>
                   <th className="px-6 py-3">日付</th>
                   <th className="px-6 py-3">スラッグ</th>
                   <th className="px-6 py-3">タイトル (JA)</th>
@@ -33,8 +38,14 @@ export default async function NewsListPage() {
                 </tr>
               </thead>
               <tbody>
-                {news.map((item) => (
+                {news.map((item, i) => (
                   <tr key={item.slug} className="border-b border-gray-50 last:border-0">
+                    <td className="px-6 py-4">
+                      <NewsReorderButtons slug={item.slug} index={i} total={news.length} allSlugs={allSlugs} />
+                    </td>
+                    <td className="px-6 py-4">
+                      <NewsPublicToggle slug={item.slug} initialIsPublic={item.isPublic !== false} />
+                    </td>
                     <td className="px-6 py-4 text-gray-500">{item.date}</td>
                     <td className="px-6 py-4 font-mono text-xs text-gray-400">{item.slug}</td>
                     <td className="px-6 py-4 font-medium text-gray-900">{item.title.ja}</td>

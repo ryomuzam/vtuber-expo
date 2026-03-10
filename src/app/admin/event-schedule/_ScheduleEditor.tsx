@@ -8,7 +8,7 @@ function genId() {
 }
 
 function emptySlot(day: 1 | 2): ScheduleSlot {
-  return { id: genId(), day, startTime: "", endTime: "", title: "", performers: "", description: "" };
+  return { id: genId(), day, startTime: "", endTime: "", title: "", titleEn: "", performers: "", performersEn: "", description: "", descriptionEn: "" };
 }
 
 function SlotForm({
@@ -40,27 +40,60 @@ function SlotForm({
         />
         <button onClick={onDelete} className="ml-auto text-sm text-red-400 hover:text-red-600">削除</button>
       </div>
-      <input
-        type="text"
-        value={slot.title}
-        onChange={(e) => onChange({ ...slot, title: e.target.value })}
-        placeholder="タイトル *"
-        className="mb-2 w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-[#3D7FE0]"
-      />
-      <input
-        type="text"
-        value={slot.performers}
-        onChange={(e) => onChange({ ...slot, performers: e.target.value })}
-        placeholder="出演者（任意）"
-        className="mb-2 w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-[#3D7FE0]"
-      />
-      <input
-        type="text"
-        value={slot.description}
-        onChange={(e) => onChange({ ...slot, description: e.target.value })}
-        placeholder="説明（任意）"
-        className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-[#3D7FE0]"
-      />
+
+      {/* Title */}
+      <div className="mb-2 grid grid-cols-2 gap-2">
+        <input
+          type="text"
+          value={slot.title}
+          onChange={(e) => onChange({ ...slot, title: e.target.value })}
+          placeholder="タイトル（日本語）*"
+          className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-[#3D7FE0]"
+        />
+        <input
+          type="text"
+          value={slot.titleEn ?? ""}
+          onChange={(e) => onChange({ ...slot, titleEn: e.target.value })}
+          placeholder="Title (English)"
+          className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-[#3D7FE0]"
+        />
+      </div>
+
+      {/* Performers */}
+      <div className="mb-2 grid grid-cols-2 gap-2">
+        <input
+          type="text"
+          value={slot.performers}
+          onChange={(e) => onChange({ ...slot, performers: e.target.value })}
+          placeholder="出演者（日本語・任意）"
+          className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-[#3D7FE0]"
+        />
+        <input
+          type="text"
+          value={slot.performersEn ?? ""}
+          onChange={(e) => onChange({ ...slot, performersEn: e.target.value })}
+          placeholder="Performers (English)"
+          className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-[#3D7FE0]"
+        />
+      </div>
+
+      {/* Description */}
+      <div className="grid grid-cols-2 gap-2">
+        <input
+          type="text"
+          value={slot.description}
+          onChange={(e) => onChange({ ...slot, description: e.target.value })}
+          placeholder="説明（日本語・任意）"
+          className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-[#3D7FE0]"
+        />
+        <input
+          type="text"
+          value={slot.descriptionEn ?? ""}
+          onChange={(e) => onChange({ ...slot, descriptionEn: e.target.value })}
+          placeholder="Description (English)"
+          className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-[#3D7FE0]"
+        />
+      </div>
     </div>
   );
 }
@@ -112,7 +145,7 @@ export default function ScheduleEditor({ initialData }: { initialData: EventSche
   const dayItems = data.items.filter((s) => s.day === tab);
 
   return (
-    <div className="max-w-2xl space-y-4">
+    <div className="max-w-3xl space-y-4">
       {/* Public toggle + Save */}
       <div className="flex items-center justify-between rounded-xl bg-white p-4 shadow-sm">
         <label className="flex items-center gap-3 cursor-pointer">
@@ -140,24 +173,48 @@ export default function ScheduleEditor({ initialData }: { initialData: EventSche
       </div>
 
       {/* Day label editors */}
-      <div className="grid grid-cols-2 gap-3 rounded-xl bg-white p-4 shadow-sm">
-        <div>
-          <label className="mb-1 block text-xs font-medium text-gray-600">DAY1 ラベル</label>
-          <input
-            type="text"
-            value={data.day1Label}
-            onChange={(e) => setData((prev) => ({ ...prev, day1Label: e.target.value }))}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#3D7FE0]"
-          />
+      <div className="rounded-xl bg-white p-4 shadow-sm space-y-3">
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="mb-1 block text-xs font-medium text-gray-600">DAY1 ラベル（日本語）</label>
+            <input
+              type="text"
+              value={data.day1Label}
+              onChange={(e) => setData((prev) => ({ ...prev, day1Label: e.target.value }))}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#3D7FE0]"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-medium text-gray-600">DAY1 Label (English)</label>
+            <input
+              type="text"
+              value={data.day1LabelEn ?? ""}
+              onChange={(e) => setData((prev) => ({ ...prev, day1LabelEn: e.target.value }))}
+              placeholder="e.g. DAY 1 - 5/3 SAT"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#3D7FE0]"
+            />
+          </div>
         </div>
-        <div>
-          <label className="mb-1 block text-xs font-medium text-gray-600">DAY2 ラベル</label>
-          <input
-            type="text"
-            value={data.day2Label}
-            onChange={(e) => setData((prev) => ({ ...prev, day2Label: e.target.value }))}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#3D7FE0]"
-          />
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="mb-1 block text-xs font-medium text-gray-600">DAY2 ラベル（日本語）</label>
+            <input
+              type="text"
+              value={data.day2Label}
+              onChange={(e) => setData((prev) => ({ ...prev, day2Label: e.target.value }))}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#3D7FE0]"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-medium text-gray-600">DAY2 Label (English)</label>
+            <input
+              type="text"
+              value={data.day2LabelEn ?? ""}
+              onChange={(e) => setData((prev) => ({ ...prev, day2LabelEn: e.target.value }))}
+              placeholder="e.g. DAY 2 - 5/4 SUN"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#3D7FE0]"
+            />
+          </div>
         </div>
       </div>
 

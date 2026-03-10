@@ -47,6 +47,29 @@ export async function PUT(request: NextRequest, { params }: Params) {
   }
 }
 
+export async function PATCH(request: NextRequest, { params }: Params) {
+  const payload = await authenticate(request);
+  if (!payload) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const { slug } = await params;
+  const item = await getNewsItem(slug);
+  if (!item) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  try {
+    const body = await request.json();
+    if (typeof body.isPublic === "boolean") {
+      item.isPublic = body.isPublic;
+    }
+    await upsertNewsItem(item);
+    revalidatePath("/");
+    revalidatePath("/en");
+    return NextResponse.json({ ok: true });
+  } catch (e) {
+    const message = e instanceof Error ? e.message : "Bad request";
+    return NextResponse.json({ error: message }, { status: 400 });
+  }
+}
+
 export async function DELETE(request: NextRequest, { params }: Params) {
   const payload = await authenticate(request);
   if (!payload) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

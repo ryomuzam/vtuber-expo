@@ -2,6 +2,7 @@ export type Agency = {
   id: string;
   name: string;
   logo?: string;
+  isPublic?: boolean;
 };
 
 export const agencies: Agency[] = [

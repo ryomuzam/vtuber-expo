@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { SponsorPageData, TieredSponsor, SponsorTier } from "@/lib/data";
+import MediaPicker from "../_components/MediaPicker";
 
 const TIERS: { key: SponsorTier; label: string; color: string }[] = [
   { key: "gold", label: "ゴールド", color: "text-yellow-600 bg-yellow-50 border-yellow-200" },
@@ -146,12 +147,11 @@ export default function SponsorEditor({ initial }: { initial: SponsorPageData })
                         </div>
                       </div>
                       <div>
-                        <label className="mb-1 block text-xs font-medium text-gray-600">ロゴ画像URL</label>
-                        <input
+                        <label className="mb-1 block text-xs font-medium text-gray-600">ロゴ画像</label>
+                        <MediaPicker
                           value={s.logoUrl}
-                          onChange={(e) => updateSponsor(s.id, { logoUrl: e.target.value })}
-                          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-[#3D7FE0] focus:outline-none"
-                          placeholder="https://example.com/logo.png"
+                          onChange={(url: string) => updateSponsor(s.id, { logoUrl: url })}
+                          placeholder="画像を選択"
                         />
                       </div>
                       <div className="flex justify-between">

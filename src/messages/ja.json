@@ -1,11 +1,11 @@
 {
   "Header": {
-    "whatis": "VTuber EXPOとは！？",
-    "about": "VTuber EXPOの魅力",
+    "whatis": "VTUBER EXPOとは",
+    "about": "VTUBER EXPOの魅力",
     "news": "最新情報",
     "overview": "イベント詳細",
-    "lineup": "出演者一覧",
-    "schedule": "当日の流れ"
+    "lineup": "出展企業一覧",
+    "schedule": "イベントスケジュール"
   },
   "LanguageToggle": {
     "ja": "JP",
@@ -19,15 +19,17 @@
     "free": "入場無料"
   },
   "About": {
-    "sectionTitle": "VTuber EXPOの3つの魅力！",
+    "sectionTitle": "世界初開催！",
     "sectionSubtitle": "ABOUT VTUBER EXPO",
-    "leadCopy": "見て、触れて、体感する！ 史上初のVTuber特化型エキスポが、ついに秋葉原に誕生！\nライブもトークも展示もグッズも、2日間まるごとぜんぶVTuber！\nここでしか味わえないワクワクが、あなたを待っています！",
-    "card1Title": "史上初！\nVTuber特化の大型エキスポ！",
-    "card1Desc": "VTuberだけの大型展示イベントは、これが史上初！ ライブステージ、トークショー、企業展示、物販、フードコートまで——VTuberのすべてが詰まった夢の空間が、2日間限りで秋葉原に出現します！",
-    "card2Title": "30以上のVTuber事務所が\nぜんぶ集結！",
-    "card2Desc": "ホロライブ、にじさんじ、ぶいすぽっ！をはじめ、国内外30以上のVTuber事務所がひとつの会場に大集結！ 推しに会えるのはもちろん、まだ知らない才能との運命の出会いも！ これだけの事務所が揃うイベントは、ほかにありません！",
-    "card3Title": "2日間ぶっ通し！\nリアルでしか味わえない興奮！",
-    "card3Desc": "スペシャルライブ、限定トークイベント、コラボフード、ここでしか手に入らない限定グッズ！ すべてが「リアル」だからこそ生まれる熱量がここにあります！ 画面の向こうの推しが、いま目の前に。しかも入場無料！ 誰でも参加OK！"
+    "leadCopy": "世界初!?VTuberに特化した博覧会が、GWの秋葉原に誕生!\n展示、ステージ、体験コーナー全てがVTuber!\nVが大好きなあなたも、これから好きになるあなたも\nみんなで楽しめるイベントです！",
+    "card1Title": "「なれる」",
+    "card1Desc": "最先端のモーションキャプチャ体験！\nその場であなたがVTuberに!?",
+    "card2Title": "「話せる」",
+    "card2Desc": "VTuberとお話ししてみませんか？\nお金を使わずに投げ銭体験もできちゃう!?",
+    "card3Title": "「遊べる」",
+    "card3Desc": "特設ステージでミニライブやトークショー\n発表会など楽しい企画が目白押し！",
+    "card4Title": "「知れる」",
+    "card4Desc": "人気VTuberやプロダクション、\n関連企業の展示が盛りだくさん！"
   },
   "News": {
     "sectionTitle": "最新情報をチェック！",
@@ -66,7 +68,7 @@
     "comingSoon": "Coming Soon"
   },
   "Schedule": {
-    "sectionTitle": "当日の流れ",
+    "sectionTitle": "イベントスケジュール",
     "sectionSubtitle": "TIME SCHEDULE",
     "day1": "DAY 1 - 5/3 SAT",
     "day2": "DAY 2 - 5/4 SUN"
@@ -74,10 +76,57 @@
   "Social": {
     "subtitle": "FOLLOW US",
     "title": "最新情報はこちら！",
-    "description": "公式XとYouTubeチャンネルで、出演者情報やイベントの最新ニュースをいち早くお届けします！"
+    "description": "公式Xより、出演者情報やイベントの最新ニュースをいち早くお届けします！"
+  },
+  "Access": {
+    "sectionTitle": "アクセス",
+    "sectionSubtitle": "Access",
+    "venue": "会場",
+    "venueValue": "ベルサール秋葉原 1階",
+    "address": "住所",
+    "addressValue": "〒101-0021 東京都千代田区外神田3-12-8",
+    "station": "最寄り駅",
+    "stationValue": "JR「秋葉原駅」電気街口 徒歩3分\n東京メトロ銀座線「末広町駅」1番出口 徒歩4分\nつくばエクスプレス「秋葉原駅」A3出口 徒歩4分"
+  },
+  "VenueMap": {
+    "sectionTitle": "会場マップ",
+    "sectionSubtitle": "VENUE MAP",
+    "moreInfo": "詳しくはこちら"
+  },
+  "EventSchedule": {
+    "sectionTitle": "イベントスケジュール",
+    "sectionSubtitle": "TIME SCHEDULE"
+  },
+  "Ticket": {
+    "sectionTitle": "チケット",
+    "sectionSubtitle": "TICKET",
+    "buyButton": "お申し込みはこちら",
+    "soldOut": "SOLD OUT",
+    "floatingButton": "TICKET"
+  },
+  "Contact": {
+    "sectionTitle": "お問い合わせ",
+    "sectionSubtitle": "Contact",
+    "description": "VTUBER EXPO 2026 に関するお問い合わせはこちらからお送りください",
+    "email": "メールアドレス",
+    "emailRequired": "必須",
+    "emailNote": "メールアドレスの入力間違いがないよう、送信前によくご確認ください",
+    "inquiryType": "お問合せ種別",
+    "selectPlaceholder": "--- Select ---",
+    "message": "お問い合わせ内容",
+    "messagePlaceholder": "お問い合わせ内容を入力してください",
+    "privacyAgree": "に同意します",
+    "privacyPolicy": "プライバシーポリシー",
+    "privacyError": "プライバシーポリシーへの同意が必要です",
+    "submitError": "送信に失敗しました",
+    "submitting": "送信中...",
+    "submit": "送信",
+    "doneTitle": "送信完了",
+    "doneMessage": "お問い合わせを受け付けました。\n担当者よりご連絡いたします。",
+    "note": "※ 内容によっては回答にお時間をいただく場合、または回答できない場合がございます"
   },
   "Footer": {
     "producer": "produced by VEXZ",
-    "copyright": "© 2026 VEXZ. All Rights Reserved."
+    "copyright": "© VTUBER EXPO 2026 All Rights Reserved."
   }
 }

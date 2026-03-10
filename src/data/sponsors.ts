@@ -2,6 +2,7 @@ export type Sponsor = {
   id: string;
   name: string;
   logo?: string;
+  isPublic?: boolean;
 };
 
 export const sponsors: Sponsor[] = [];
@@ -10,6 +11,7 @@ export type Tieup = {
   id: string;
   name: string;
   logo?: string;
+  isPublic?: boolean;
 };
 
 export const tieups: Tieup[] = [

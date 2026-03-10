@@ -2,6 +2,7 @@ export type NewsItem = {
   slug: string;
   date: string;
   image?: string;
+  isPublic?: boolean;
   title: { ja: string; en: string };
   description: { ja: string; en: string };
   body: { ja: string; en: string };

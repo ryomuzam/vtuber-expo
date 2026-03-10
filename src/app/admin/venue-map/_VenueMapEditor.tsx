@@ -1,25 +1,8 @@
 "use client";
 
 import { useState, useRef } from "react";
-import type { VenueMapData, VenueBooth, BoothType } from "@/lib/data";
-
-const BOOTH_COLORS: Record<BoothType, string> = {
-  booth: "#3D7FE0",
-  stage: "#E040FB",
-  entrance: "#22c55e",
-  goods: "#a855f7",
-  food: "#f97316",
-  other: "#6b7280",
-};
-
-const BOOTH_TYPE_LABELS: Record<BoothType, string> = {
-  booth: "展示ブース",
-  stage: "ステージ",
-  entrance: "エントランス",
-  goods: "グッズ",
-  food: "フード",
-  other: "その他",
-};
+import type { VenueMapData, VenueBooth, PinCategory } from "@/lib/data";
+import MediaPicker from "../_components/MediaPicker";
 
 function genId() {
   return Math.random().toString(36).slice(2, 9);
@@ -29,17 +12,60 @@ export default function VenueMapEditor({ initialData }: { initialData: VenueMapD
   const [data, setData] = useState<VenueMapData>(initialData);
   const [editingBooth, setEditingBooth] = useState<VenueBooth | null>(null);
   const [isNew, setIsNew] = useState(false);
+  const [showCategoryEditor, setShowCategoryEditor] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
   const mapRef = useRef<HTMLDivElement>(null);
 
+  const categories = data.pinCategories ?? [];
+
+  function getCategoryColor(categoryId: string) {
+    return categories.find((c) => c.id === categoryId)?.color ?? "#6b7280";
+  }
+
+  function getCategoryName(categoryId: string) {
+    return categories.find((c) => c.id === categoryId)?.name ?? "未分類";
+  }
+
+  // --- Category management ---
+  function addCategory() {
+    setData((prev) => ({
+      ...prev,
+      pinCategories: [...(prev.pinCategories ?? []), { id: genId(), name: "", color: "#6b7280" }],
+    }));
+  }
+
+  function updateCategory(index: number, field: keyof PinCategory, value: string) {
+    setData((prev) => ({
+      ...prev,
+      pinCategories: prev.pinCategories.map((c, i) =>
+        i === index ? { ...c, [field]: value } : c
+      ),
+    }));
+  }
+
+  function removeCategory(index: number) {
+    setData((prev) => ({
+      ...prev,
+      pinCategories: prev.pinCategories.filter((_, i) => i !== index),
+    }));
+  }
+
+  // --- Booth management ---
   function handleMapClick(e: React.MouseEvent<HTMLDivElement>) {
     if ((e.target as HTMLElement).closest("button")) return;
     const rect = mapRef.current!.getBoundingClientRect();
     const x = parseFloat((((e.clientX - rect.left) / rect.width) * 100).toFixed(1));
     const y = parseFloat((((e.clientY - rect.top) / rect.height) * 100).toFixed(1));
-    setEditingBooth({ id: genId(), name: "", type: "booth", description: "", x, y });
+    setEditingBooth({
+      id: genId(),
+      name: "",
+      categoryId: categories[0]?.id ?? "",
+      description: "",
+      x,
+      y,
+    });
     setIsNew(true);
   }
 
@@ -118,10 +144,71 @@ export default function VenueMapEditor({ initialData }: { initialData: VenueMapD
         </div>
       </div>
 
+      {/* Pin Category Editor */}
+      <div className="rounded-xl bg-white p-4 shadow-sm">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-sm font-semibold text-gray-800">ピンカテゴリ</h3>
+          <button
+            onClick={() => setShowCategoryEditor(!showCategoryEditor)}
+            className="text-xs font-medium text-[#3D7FE0] hover:underline"
+          >
+            {showCategoryEditor ? "閉じる" : "編集"}
+          </button>
+        </div>
+
+        {/* Legend (always visible) */}
+        <div className="flex flex-wrap gap-3">
+          {categories.map((cat) => (
+            <span key={cat.id} className="flex items-center gap-1.5 text-xs text-gray-500">
+              <span className="h-3 w-3 rounded-full" style={{ backgroundColor: cat.color }} />
+              {cat.name || "（未設定）"}
+            </span>
+          ))}
+          {categories.length === 0 && (
+            <span className="text-xs text-gray-400">カテゴリがありません</span>
+          )}
+        </div>
+
+        {/* Edit mode */}
+        {showCategoryEditor && (
+          <div className="mt-4 space-y-2 border-t border-gray-100 pt-4">
+            {categories.map((cat, i) => (
+              <div key={cat.id} className="flex items-center gap-2">
+                <input
+                  type="color"
+                  value={cat.color}
+                  onChange={(e) => updateCategory(i, "color", e.target.value)}
+                  className="h-8 w-8 shrink-0 cursor-pointer rounded border border-gray-200"
+                />
+                <input
+                  type="text"
+                  value={cat.name}
+                  onChange={(e) => updateCategory(i, "name", e.target.value)}
+                  className="flex-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-[#3D7FE0]"
+                  placeholder="カテゴリ名"
+                />
+                <button
+                  onClick={() => removeCategory(i)}
+                  className="shrink-0 rounded-md bg-red-50 px-2 py-1 text-xs text-red-500 hover:bg-red-100"
+                >
+                  削除
+                </button>
+              </div>
+            ))}
+            <button
+              onClick={addCategory}
+              className="w-full rounded-lg border border-dashed border-gray-200 py-2 text-xs text-gray-400 hover:border-[#3D7FE0] hover:text-[#3D7FE0]"
+            >
+              ＋ カテゴリを追加
+            </button>
+          </div>
+        )}
+      </div>
+
       <div className="flex gap-4">
         {/* Map */}
         <div className="flex-1 rounded-xl bg-white p-4 shadow-sm">
-          <p className="mb-3 text-xs text-gray-400">マップ上をクリックしてブースを追加</p>
+          <p className="mb-3 text-xs text-gray-400">マップ上をクリックしてピンを追加</p>
           <div
             ref={mapRef}
             className="relative cursor-crosshair overflow-hidden rounded-lg border border-gray-200"
@@ -137,29 +224,20 @@ export default function VenueMapEditor({ initialData }: { initialData: VenueMapD
                 style={{
                   left: `${booth.x}%`,
                   top: `${booth.y}%`,
-                  backgroundColor: BOOTH_COLORS[booth.type],
+                  backgroundColor: getCategoryColor(booth.categoryId),
                 }}
               >
                 <span className="text-[9px] font-bold leading-none">●</span>
               </button>
             ))}
           </div>
-          {/* Legend */}
-          <div className="mt-3 flex flex-wrap gap-3">
-            {(Object.keys(BOOTH_COLORS) as BoothType[]).map((type) => (
-              <span key={type} className="flex items-center gap-1.5 text-xs text-gray-500">
-                <span className="h-3 w-3 rounded-full" style={{ backgroundColor: BOOTH_COLORS[type] }} />
-                {BOOTH_TYPE_LABELS[type]}
-              </span>
-            ))}
-          </div>
         </div>
 
         {/* Edit panel */}
         {editingBooth && (
-          <div className="w-72 rounded-xl bg-white p-5 shadow-sm">
+          <div className="w-72 shrink-0 rounded-xl bg-white p-5 shadow-sm">
             <h3 className="mb-4 font-semibold text-gray-900">
-              {isNew ? "ブースを追加" : "ブースを編集"}
+              {isNew ? "ピンを追加" : "ピンを編集"}
             </h3>
             <div className="space-y-3">
               <div>
@@ -173,16 +251,28 @@ export default function VenueMapEditor({ initialData }: { initialData: VenueMapD
                 />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-medium text-gray-600">種類</label>
+                <label className="mb-1 block text-xs font-medium text-gray-600">カテゴリ</label>
                 <select
-                  value={editingBooth.type}
-                  onChange={(e) => setEditingBooth({ ...editingBooth, type: e.target.value as BoothType })}
+                  value={editingBooth.categoryId}
+                  onChange={(e) => setEditingBooth({ ...editingBooth, categoryId: e.target.value })}
                   className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#3D7FE0]"
                 >
-                  {(Object.keys(BOOTH_TYPE_LABELS) as BoothType[]).map((t) => (
-                    <option key={t} value={t}>{BOOTH_TYPE_LABELS[t]}</option>
+                  {categories.length === 0 && <option value="">カテゴリなし</option>}
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>{cat.name || "（未設定）"}</option>
                   ))}
                 </select>
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-medium text-gray-600">ロゴ画像</label>
+                <MediaPicker
+                  value={editingBooth.logoUrl ?? ""}
+                  onChange={(url: string) => setEditingBooth({ ...editingBooth, logoUrl: url })}
+                  placeholder="ロゴを選択"
+                />
+                {editingBooth.logoUrl && (
+                  <img src={editingBooth.logoUrl} alt="" className="mt-2 h-10 w-auto rounded border border-gray-100 object-contain" />
+                )}
               </div>
               <div>
                 <label className="mb-1 block text-xs font-medium text-gray-600">説明</label>
@@ -192,6 +282,16 @@ export default function VenueMapEditor({ initialData }: { initialData: VenueMapD
                   rows={3}
                   className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#3D7FE0] focus:ring-2 focus:ring-[#3D7FE0]/20"
                   placeholder="ブースの説明"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-medium text-gray-600">URL</label>
+                <input
+                  type="url"
+                  value={editingBooth.url ?? ""}
+                  onChange={(e) => setEditingBooth({ ...editingBooth, url: e.target.value })}
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#3D7FE0] focus:ring-2 focus:ring-[#3D7FE0]/20"
+                  placeholder="https://example.com"
                 />
               </div>
               <div className="flex gap-2 text-xs text-gray-400">
