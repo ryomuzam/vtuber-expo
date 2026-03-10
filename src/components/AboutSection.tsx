@@ -38,7 +38,7 @@ export default async function AboutSection({ data }: Props) {
             <ScrollReveal key={i} delay={i * 100}>
               <div className="group flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-md transition-transform hover:-translate-y-1 hover:shadow-lg">
                 {/* Top: label + keyword */}
-                <div className="flex flex-1 flex-col items-center justify-center px-4 pb-2 pt-6 text-center">
+                <div className="flex flex-col items-center justify-end px-4 pb-2 pt-6 text-center" style={{ minHeight: "5.5rem" }}>
                   <p className="mb-1 text-xs font-bold text-gray-500 md:text-sm">
                     {card.label}
                   </p>
@@ -63,7 +63,7 @@ export default async function AboutSection({ data }: Props) {
                 </div>
 
                 {/* Bottom: description */}
-                <div className="bg-gradient-to-r from-[#3D7FE0] to-[#22D3EE] px-4 py-5">
+                <div className="flex flex-1 items-center bg-gradient-to-r from-[#3D7FE0] to-[#22D3EE] px-4 py-5">
                   <p className="whitespace-pre-line text-center text-xs font-bold leading-relaxed text-white md:text-sm">
                     {card.desc}
                   </p>
