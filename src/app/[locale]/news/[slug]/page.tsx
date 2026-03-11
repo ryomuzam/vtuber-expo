@@ -42,6 +42,26 @@ export default async function NewsDetailPage({ params }: Props) {
   );
 }
 
+function linkify(text: string) {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const parts = text.split(urlRegex);
+  return parts.map((part, i) =>
+    urlRegex.test(part) ? (
+      <a
+        key={i}
+        href={part}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-accent-blue underline break-all hover:text-accent-magenta transition-colors"
+      >
+        {part}
+      </a>
+    ) : (
+      part
+    )
+  );
+}
+
 function NewsDetailContent({ item }: { item: NewsItem }) {
   const t = useTranslations("News");
   const locale = useLocale();
@@ -81,7 +101,7 @@ function NewsDetailContent({ item }: { item: NewsItem }) {
       {/* Body */}
       <div className="mt-8 space-y-4 text-sm leading-relaxed text-pop-muted md:text-base">
         {body.split("\n").map((line, i) => (
-          <p key={i}>{line || "\u00A0"}</p>
+          <p key={i}>{line ? linkify(line) : "\u00A0"}</p>
         ))}
       </div>
     </article>
