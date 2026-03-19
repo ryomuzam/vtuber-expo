@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { addContactInquiry, getContactSettings } from "@/lib/data";
+import { sendContactNotification } from "@/lib/mail";
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,6 +16,16 @@ export async function POST(request: NextRequest) {
     }
 
     await addContactInquiry({ email, inquiryType, message });
+
+    // メール通知（失敗してもお問い合わせ自体は成功扱い）
+    if (settings.notifyEmail) {
+      try {
+        await sendContactNotification(settings.notifyEmail, { email, inquiryType, message });
+      } catch (e) {
+        console.error("Failed to send notification email:", e);
+      }
+    }
+
     return NextResponse.json({ ok: true });
   } catch (e) {
     const message = e instanceof Error ? e.message : "送信に失敗しました";
