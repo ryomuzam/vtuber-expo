@@ -6,9 +6,10 @@ import NavLink from "./NavLink";
 
 type Props = {
   schedulePublic?: boolean;
+  xUrl?: string;
 };
 
-export default function Header({ schedulePublic = false }: Props) {
+export default function Header({ schedulePublic = false, xUrl }: Props) {
   const t = useTranslations("Header");
   const locale = useLocale();
 
@@ -51,7 +52,7 @@ export default function Header({ schedulePublic = false }: Props) {
         </div>
 
         {/* Mobile */}
-        <MobileMenu schedulePublic={schedulePublic} />
+        <MobileMenu schedulePublic={schedulePublic} xUrl={xUrl} />
       </div>
     </header>
   );

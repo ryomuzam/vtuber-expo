@@ -71,7 +71,7 @@ export default async function HomePage({ params }: Props) {
 
   return (
     <>
-      <Header schedulePublic={eventSchedule.isPublic} />
+      <Header schedulePublic={eventSchedule.isPublic} xUrl={socialLinks.items.find((i) => i.platform === "x" && i.isPublic)?.url} />
       {floatingChars.isPublic && floatingChars.chars.length > 0 && (
         <FloatingCharacters chars={floatingChars.chars} />
       )}
