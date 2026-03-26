@@ -1,5 +1,6 @@
 import { getLocale } from "next-intl/server";
 import ScrollReveal from "./ScrollReveal";
+import CountdownTimer from "./CountdownTimer";
 import type { VTuberWallData } from "@/lib/data";
 
 type Props = {
@@ -79,10 +80,21 @@ export default async function VTuberWallSection({ data }: Props) {
 
           {/* Deadline */}
           {deadline && (
-            <p className="mb-8 text-center text-sm font-bold text-[#22d3ee]">
+            <p className="mb-4 text-center text-sm font-bold text-[#22d3ee]">
               {deadline}
             </p>
           )}
+
+          {/* Countdown */}
+          <div className="mb-8">
+            <CountdownTimer
+              targetDate="2026-03-31T23:59:59+09:00"
+              labels={isJa
+                ? { days: "日", hours: "時間", minutes: "分", seconds: "秒", expired: "募集は終了しました" }
+                : { days: "DAYS", hours: "HRS", minutes: "MIN", seconds: "SEC", expired: "Applications are closed" }
+              }
+            />
+          </div>
 
           {/* Details grid */}
           {isJa && (
