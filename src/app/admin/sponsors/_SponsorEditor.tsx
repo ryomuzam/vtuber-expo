@@ -4,11 +4,11 @@ import { useState } from "react";
 import type { SponsorPageData, TieredSponsor, SponsorTier } from "@/lib/data";
 import MediaPicker from "../_components/MediaPicker";
 
-const TIERS: { key: SponsorTier; label: string; color: string }[] = [
-  { key: "gold", label: "ゴールド", color: "text-yellow-600 bg-yellow-50 border-yellow-200" },
-  { key: "silver", label: "シルバー", color: "text-gray-600 bg-gray-50 border-gray-200" },
-  { key: "bronze", label: "ブロンズ", color: "text-orange-700 bg-orange-50 border-orange-200" },
-  { key: "sampling", label: "サンプリング", color: "text-blue-600 bg-blue-50 border-blue-200" },
+const TIERS: { key: SponsorTier; label: string; sizeLabel: string; color: string }[] = [
+  { key: "gold", label: "大（ゴールド）", sizeLabel: "最大ロゴ", color: "text-yellow-600 bg-yellow-50 border-yellow-200" },
+  { key: "silver", label: "中（シルバー）", sizeLabel: "大ロゴ", color: "text-gray-600 bg-gray-50 border-gray-200" },
+  { key: "bronze", label: "小（ブロンズ）", sizeLabel: "中ロゴ", color: "text-orange-700 bg-orange-50 border-orange-200" },
+  { key: "sampling", label: "極小（サンプリング）", sizeLabel: "小ロゴ", color: "text-blue-600 bg-blue-50 border-blue-200" },
 ];
 
 function newSponsor(tier: SponsorTier): TieredSponsor {
@@ -103,12 +103,12 @@ export default function SponsorEditor({ initial }: { initial: SponsorPageData })
       </div>
 
       {/* Tiers */}
-      {TIERS.map(({ key, label, color }) => {
+      {TIERS.map(({ key, label, sizeLabel, color }) => {
         const tierSponsors = data.sponsors.filter((s) => s.tier === key);
         return (
           <div key={key} className={`rounded-xl border-2 p-5 ${color}`}>
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-bold text-lg">{label}スポンサー</h3>
+              <h3 className="font-bold text-lg">{label} <span className="text-sm font-normal opacity-70">— {sizeLabel}</span></h3>
               <button
                 onClick={() => addSponsor(key)}
                 className="rounded-lg bg-white/80 px-3 py-1.5 text-sm font-medium shadow-sm hover:bg-white"

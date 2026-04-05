@@ -1,15 +1,15 @@
 import type { SponsorPageData, SponsorTier, TieredSponsor } from "@/lib/data";
 
-const TIER_CONFIG: Record<SponsorTier, { label: string; logoSize: string; cols: string }> = {
-  gold: { label: "GOLD", logoSize: "h-20", cols: "grid-cols-2 sm:grid-cols-3" },
-  silver: { label: "SILVER", logoSize: "h-14", cols: "grid-cols-3 sm:grid-cols-4" },
-  bronze: { label: "BRONZE", logoSize: "h-12", cols: "grid-cols-4 sm:grid-cols-5" },
-  sampling: { label: "SAMPLING", logoSize: "h-10", cols: "grid-cols-4 sm:grid-cols-6" },
+const TIER_CONFIG: Record<SponsorTier, { logoSize: string; itemWidth: string; padding: string }> = {
+  gold: { logoSize: "h-24", itemWidth: "w-48 sm:w-56", padding: "p-6" },
+  silver: { logoSize: "h-16", itemWidth: "w-36 sm:w-44", padding: "p-5" },
+  bronze: { logoSize: "h-12", itemWidth: "w-28 sm:w-36", padding: "p-4" },
+  sampling: { logoSize: "h-10", itemWidth: "w-24 sm:w-32", padding: "p-3" },
 };
 
 const TIER_ORDER: SponsorTier[] = ["gold", "silver", "bronze", "sampling"];
 
-function SponsorLogo({ sponsor, logoSize }: { sponsor: TieredSponsor; logoSize: string }) {
+function SponsorLogo({ sponsor, logoSize, padding }: { sponsor: TieredSponsor; logoSize: string; padding: string }) {
   const inner = sponsor.logoUrl ? (
     // eslint-disable-next-line @next/next/no-img-element
     <img
@@ -27,14 +27,14 @@ function SponsorLogo({ sponsor, logoSize }: { sponsor: TieredSponsor; logoSize: 
         href={sponsor.websiteUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center justify-center rounded-lg bg-white p-4 shadow-sm transition hover:shadow-md"
+        className={`flex items-center justify-center rounded-lg bg-white ${padding} shadow-sm transition hover:shadow-md`}
       >
         {inner}
       </a>
     );
   }
   return (
-    <div className="flex items-center justify-center rounded-lg bg-white p-4 shadow-sm">
+    <div className={`flex items-center justify-center rounded-lg bg-white ${padding} shadow-sm`}>
       {inner}
     </div>
   );
@@ -43,36 +43,22 @@ function SponsorLogo({ sponsor, logoSize }: { sponsor: TieredSponsor; logoSize: 
 export default function SponsorsSection({ data }: { data: SponsorPageData }) {
   return (
     <section className="w-full bg-gray-50 py-16 px-4">
-      <div className="mx-auto max-w-4xl">
-        <h2 className="mb-12 text-center text-3xl font-black text-gray-900">SPONSORS</h2>
-        <div className="space-y-12">
+      <div className="mx-auto max-w-5xl">
+        <h2 className="mb-12 text-center text-3xl font-black text-gray-900">
+          SPONSORS &amp; PARTNERS
+        </h2>
+        <div className="space-y-8">
           {TIER_ORDER.map((tier) => {
             const sponsors = data.sponsors.filter((s) => s.tier === tier);
             if (sponsors.length === 0) return null;
             const config = TIER_CONFIG[tier];
             return (
-              <div key={tier}>
-                <div className="mb-6 flex items-center gap-4">
-                  <div
-                    className={`rounded-full px-4 py-1 text-xs font-bold tracking-widest ${
-                      tier === "gold"
-                        ? "bg-yellow-400 text-yellow-900"
-                        : tier === "silver"
-                        ? "bg-gray-300 text-gray-800"
-                        : tier === "bronze"
-                        ? "bg-orange-300 text-orange-900"
-                        : "bg-blue-200 text-blue-900"
-                    }`}
-                  >
-                    {config.label}
+              <div key={tier} className="flex flex-wrap justify-center gap-4">
+                {sponsors.map((s) => (
+                  <div key={s.id} className={config.itemWidth}>
+                    <SponsorLogo sponsor={s} logoSize={config.logoSize} padding={config.padding} />
                   </div>
-                  <div className="flex-1 border-t border-gray-200" />
-                </div>
-                <div className={`grid ${config.cols} gap-4`}>
-                  {sponsors.map((s) => (
-                    <SponsorLogo key={s.id} sponsor={s} logoSize={config.logoSize} />
-                  ))}
-                </div>
+                ))}
               </div>
             );
           })}
