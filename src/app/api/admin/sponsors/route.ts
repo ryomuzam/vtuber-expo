@@ -31,7 +31,8 @@ export async function PUT(request: Request) {
   }
   const body = await request.json();
   await setSponsorPageData(body);
-  revalidatePath("/");
-  revalidatePath("/en");
+  revalidatePath("/", "layout");
+  revalidatePath("/en", "layout");
+  revalidatePath("/ja", "layout");
   return NextResponse.json({ ok: true });
 }
