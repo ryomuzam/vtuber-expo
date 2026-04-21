@@ -22,6 +22,7 @@ const empty: NewsItem = {
 export default function NewsForm({ initial, isNew = false }: Props) {
   const router = useRouter();
   const [form, setForm] = useState<NewsItem>(initial ?? empty);
+  const [originalSlug] = useState<string>(initial?.slug ?? "");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -45,7 +46,7 @@ export default function NewsForm({ initial, isNew = false }: Props) {
     setSaving(true);
 
     try {
-      const url = isNew ? "/api/admin/news" : `/api/admin/news/${form.slug}`;
+      const url = isNew ? "/api/admin/news" : `/api/admin/news/${originalSlug}`;
       const method = isNew ? "POST" : "PUT";
 
       const res = await fetch(url, {
@@ -83,11 +84,15 @@ export default function NewsForm({ initial, isNew = false }: Props) {
             value={form.slug}
             onChange={(e) => update("slug", e.target.value)}
             required
-            disabled={!isNew}
             pattern="[a-z0-9-]+"
-            className="input disabled:bg-gray-100 disabled:text-gray-500"
+            className="input"
             placeholder="my-news-slug"
           />
+          {!isNew && form.slug !== originalSlug && (
+            <p className="mt-1 text-xs text-amber-600">
+              スラッグを変更すると、記事URL（/news/{originalSlug}）も変わります。
+            </p>
+          )}
         </div>
         <div>
           <label className="label">日付 (例: 2026.03.04)</label>

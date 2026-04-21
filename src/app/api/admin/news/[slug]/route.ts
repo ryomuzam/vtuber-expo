@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
-import { getNewsItem, upsertNewsItem, deleteNewsItem, type NewsItem } from "@/lib/data";
+import { getNews, getNewsItem, setNews, upsertNewsItem, deleteNewsItem, type NewsItem } from "@/lib/data";
 import { revalidatePath } from "next/cache";
 
 async function authenticate(request: NextRequest) {
@@ -34,13 +34,37 @@ export async function PUT(request: NextRequest, { params }: Params) {
 
   try {
     const item: NewsItem = await request.json();
-    item.slug = slug; // ensure slug matches URL
-    await upsertNewsItem(item);
+    const newSlug = (item.slug ?? "").trim();
+
+    if (!/^[a-z0-9-]+$/.test(newSlug)) {
+      return NextResponse.json({ error: "スラッグは英数字とハイフンのみ使用できます" }, { status: 400 });
+    }
+
+    if (newSlug !== slug) {
+      const list = await getNews();
+      if (list.some((n) => n.slug === newSlug)) {
+        return NextResponse.json({ error: "このスラッグは既に使用されています" }, { status: 409 });
+      }
+      const idx = list.findIndex((n) => n.slug === slug);
+      if (idx < 0) {
+        return NextResponse.json({ error: "Not found" }, { status: 404 });
+      }
+      list[idx] = { ...item, slug: newSlug };
+      await setNews(list);
+      revalidatePath(`/news/${slug}`);
+      revalidatePath(`/en/news/${slug}`);
+      revalidatePath(`/news/${newSlug}`);
+      revalidatePath(`/en/news/${newSlug}`);
+    } else {
+      item.slug = slug;
+      await upsertNewsItem(item);
+      revalidatePath(`/news/${slug}`);
+      revalidatePath(`/en/news/${slug}`);
+    }
+
     revalidatePath("/");
     revalidatePath("/en");
-    revalidatePath(`/news/${slug}`);
-    revalidatePath(`/en/news/${slug}`);
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, slug: newSlug });
   } catch (e) {
     const message = e instanceof Error ? e.message : "Bad request";
     return NextResponse.json({ error: message }, { status: 400 });
