@@ -101,44 +101,58 @@ export default function HeroSection({ slides }: Props) {
           }}
           onTransitionEnd={handleTransitionEnd}
         >
-          {extended.map((slide, i) => (
-            <div
-              key={`${slide.id}-${i}`}
-              className="relative w-[var(--sw)] shrink-0"
-            >
-              {/* Slide content */}
-              {slide.src ? (
-                <div className="relative aspect-[16/9]">
-                  <Image
-                    src={slide.src}
-                    alt={slide.label}
-                    fill
-                    className="object-cover"
-                    priority={slide.id === slides[0]?.id}
-                  />
-                </div>
-              ) : (
-                <div className="img-placeholder flex aspect-[16/9] items-center justify-center">
-                  <span className="text-sm font-medium tracking-wider text-accent-blue/30 md:text-base">
-                    {slide.label} — 1920 × 1080
-                  </span>
-                </div>
-              )}
+          {extended.map((slide, i) => {
+            const slideContent = slide.src ? (
+              <div className="relative aspect-[16/9]">
+                <Image
+                  src={slide.src}
+                  alt={slide.label}
+                  fill
+                  className="object-cover"
+                  priority={slide.id === slides[0]?.id}
+                />
+              </div>
+            ) : (
+              <div className="img-placeholder flex aspect-[16/9] items-center justify-center">
+                <span className="text-sm font-medium tracking-wider text-accent-blue/30 md:text-base">
+                  {slide.label} — 1920 × 1080
+                </span>
+              </div>
+            );
+            const isActive =
+              i === index ||
+              (index === 0 && i === extended.length - 2) ||
+              (index === extended.length - 1 && i === 1);
+            const url = slide.url?.trim();
+            const isExternal = !!url && /^https?:\/\//i.test(url);
 
-              {/* Dark overlay for non-active slides */}
+            return (
               <div
-                className="pointer-events-none absolute inset-0 bg-black/60 transition-opacity duration-600 ease-in-out"
-                style={{
-                  opacity:
-                    i === index ||
-                    (index === 0 && i === extended.length - 2) ||
-                    (index === extended.length - 1 && i === 1)
-                      ? 0
-                      : 1,
-                }}
-              />
-            </div>
-          ))}
+                key={`${slide.id}-${i}`}
+                className="relative w-[var(--sw)] shrink-0"
+              >
+                {url && isActive ? (
+                  <a
+                    href={url}
+                    target={isExternal ? "_blank" : undefined}
+                    rel={isExternal ? "noopener noreferrer" : undefined}
+                    aria-label={slide.label}
+                    className="block"
+                  >
+                    {slideContent}
+                  </a>
+                ) : (
+                  slideContent
+                )}
+
+                {/* Dark overlay for non-active slides */}
+                <div
+                  className="pointer-events-none absolute inset-0 bg-black/60 transition-opacity duration-600 ease-in-out"
+                  style={{ opacity: isActive ? 0 : 1 }}
+                />
+              </div>
+            );
+          })}
         </div>
 
         {/* Navigation buttons — centered vertically within the slider track */}

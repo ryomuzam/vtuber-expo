@@ -28,7 +28,7 @@ export default function HeroForm({ initial }: { initial: HeroSlide[] }) {
 
   function addSlide() {
     const maxId = slides.reduce((m, s) => Math.max(m, s.id), 0);
-    setSlides([...slides, { id: maxId + 1, label: "", src: "" }]);
+    setSlides([...slides, { id: maxId + 1, label: "", src: "", url: "" }]);
   }
 
   function removeSlide(index: number) {
@@ -111,6 +111,19 @@ export default function HeroForm({ initial }: { initial: HeroSlide[] }) {
                 placeholder="/images/hero/kv1.png"
               />
             </div>
+          </div>
+          <div className="mt-3">
+            <label className="label">リンクURL（任意）</label>
+            <input
+              type="text"
+              value={slide.url ?? ""}
+              onChange={(e) => update(i, "url", e.target.value)}
+              className="input"
+              placeholder="https://example.com/ または /news/xxx"
+            />
+            <p className="mt-1 text-xs text-gray-400">
+              指定するとスライド画像クリックで遷移します。http(s)で始まる場合は別タブで開きます。
+            </p>
           </div>
         </div>
       ))}

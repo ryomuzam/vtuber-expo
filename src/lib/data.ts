@@ -8,6 +8,7 @@ export type HeroSlide = {
   id: number;
   label: string;
   src: string;
+  url?: string;
 };
 
 export type OverviewLocaleData = {

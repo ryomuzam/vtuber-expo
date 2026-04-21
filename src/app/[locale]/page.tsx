@@ -77,7 +77,7 @@ export default async function HomePage({ params }: Props) {
       )}
       <main className="relative z-[2]">
         <HeroSection slides={slides} />
-        <AgencyMarquee agencies={agencies} tieups={tieups} />
+        <AgencyMarquee agencies={agencies} sponsors={sponsors} tieups={tieups} />
         {aboutIntroData.isPublic && <AboutIntroSection data={aboutIntroData} />}
         {aboutData.isPublic && <AboutSection data={aboutData} />}
         <NewsSection news={news.filter((n) => n.isPublic !== false)} />

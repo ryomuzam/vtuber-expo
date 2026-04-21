@@ -1,5 +1,5 @@
 import Image from "next/image";
-import type { Agency, Tieup } from "@/lib/data";
+import type { Agency, Sponsor, Tieup } from "@/lib/data";
 
 type LogoItem = { id: string; name: string; logo?: string };
 
@@ -48,11 +48,12 @@ function MarqueeRow({
 
 type Props = {
   agencies: Agency[];
+  sponsors: Sponsor[];
   tieups: Tieup[];
 };
 
-export default function AgencyMarquee({ agencies, tieups }: Props) {
-  const allItems: LogoItem[] = [...agencies, ...tieups].filter((item) => (item as { isPublic?: boolean }).isPublic !== false);
+export default function AgencyMarquee({ agencies, sponsors, tieups }: Props) {
+  const allItems: LogoItem[] = [...agencies, ...sponsors, ...tieups].filter((item) => (item as { isPublic?: boolean }).isPublic !== false);
   if (allItems.length === 0) return null;
 
   const half = Math.ceil(allItems.length / 2);
