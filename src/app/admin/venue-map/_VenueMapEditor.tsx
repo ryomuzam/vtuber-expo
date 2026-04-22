@@ -144,6 +144,19 @@ export default function VenueMapEditor({ initialData }: { initialData: VenueMapD
         </div>
       </div>
 
+      {/* Map Image */}
+      <div className="rounded-xl bg-white p-4 shadow-sm">
+        <h3 className="mb-3 text-sm font-semibold text-gray-800">マップ画像</h3>
+        <MediaPicker
+          value={data.mapImageUrl}
+          onChange={(url: string) => setData((prev) => ({ ...prev, mapImageUrl: url }))}
+          placeholder="/images/venue/..."
+        />
+        <p className="mt-2 text-xs text-gray-400">
+          会場マップの背景画像を選択します。変更後は「保存する」を押してください。
+        </p>
+      </div>
+
       {/* Pin Category Editor */}
       <div className="rounded-xl bg-white p-4 shadow-sm">
         <div className="flex items-center justify-between mb-3">

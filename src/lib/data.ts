@@ -256,7 +256,7 @@ const defaultPinCategories: PinCategory[] = [
 
 const staticVenueMapData: VenueMapData = {
   isPublic: false,
-  mapImageUrl: "/images/venue/floor-plan.svg",
+  mapImageUrl: "/images/venue/vexpo_floormap_v3.png",
   pinCategories: defaultPinCategories,
   booths: [],
 };
