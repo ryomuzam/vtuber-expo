@@ -32,21 +32,26 @@ export default function VenueMapSection({ data, labels }: { data: VenueMapData; 
 
         <div className="relative overflow-hidden rounded-2xl shadow-lg">
           <img src={data.mapImageUrl} alt={labels.sectionTitle} className="w-full" />
-          {data.booths.map((booth) => (
-            <button
-              key={booth.id}
-              onClick={() => setSelected(selected?.id === booth.id ? null : booth)}
-              title={booth.name}
-              className="absolute flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full text-white shadow-md ring-2 ring-white transition hover:scale-125 active:scale-110"
-              style={{
-                left: `${booth.x}%`,
-                top: `${booth.y}%`,
-                backgroundColor: getCategoryColor(booth.categoryId),
-              }}
-            >
-              <span className="text-[10px] font-bold">●</span>
-            </button>
-          ))}
+          {data.booths.map((booth) => {
+            const size = booth.size ?? 28;
+            return (
+              <button
+                key={booth.id}
+                onClick={() => setSelected(selected?.id === booth.id ? null : booth)}
+                title={booth.name}
+                className="absolute flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full text-white shadow-md ring-2 ring-white transition hover:scale-125 active:scale-110"
+                style={{
+                  left: `${booth.x}%`,
+                  top: `${booth.y}%`,
+                  width: `${size}px`,
+                  height: `${size}px`,
+                  backgroundColor: getCategoryColor(booth.categoryId),
+                }}
+              >
+                <span className="font-bold" style={{ fontSize: `${Math.max(8, Math.round(size * 0.4))}px` }}>●</span>
+              </button>
+            );
+          })}
         </div>
 
         {/* Legend */}

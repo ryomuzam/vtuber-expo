@@ -267,6 +267,7 @@ export default function VenueMapEditor({ initialData }: { initialData: VenueMapD
             <img src={data.mapImageUrl} alt="会場マップ" className="w-full" draggable={false} />
             {data.booths.map((booth) => {
               const isDragging = draggingId === booth.id;
+              const size = booth.size ?? 24;
               return (
                 <button
                   key={booth.id}
@@ -283,7 +284,7 @@ export default function VenueMapEditor({ initialData }: { initialData: VenueMapD
                     handleBoothClick(booth);
                   }}
                   title={`${booth.name}（ドラッグで移動）`}
-                  className={`absolute flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full text-white shadow-md ring-2 ring-white touch-none select-none ${
+                  className={`absolute flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full text-white shadow-md ring-2 ring-white touch-none select-none ${
                     isDragging
                       ? "scale-125 cursor-grabbing opacity-90 ring-4"
                       : "cursor-grab transition hover:scale-125"
@@ -291,10 +292,12 @@ export default function VenueMapEditor({ initialData }: { initialData: VenueMapD
                   style={{
                     left: `${booth.x}%`,
                     top: `${booth.y}%`,
+                    width: `${size}px`,
+                    height: `${size}px`,
                     backgroundColor: getCategoryColor(booth.categoryId),
                   }}
                 >
-                  <span className="text-[9px] font-bold leading-none">●</span>
+                  <span className="font-bold leading-none" style={{ fontSize: `${Math.max(8, Math.round(size * 0.4))}px` }}>●</span>
                 </button>
               );
             })}
@@ -361,6 +364,37 @@ export default function VenueMapEditor({ initialData }: { initialData: VenueMapD
                   className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#3D7FE0] focus:ring-2 focus:ring-[#3D7FE0]/20"
                   placeholder="https://example.com"
                 />
+              </div>
+              <div>
+                <label className="mb-1 flex items-center justify-between text-xs font-medium text-gray-600">
+                  <span>ピンサイズ</span>
+                  <span className="text-gray-400">{editingBooth.size ?? 24}px</span>
+                </label>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditingBooth({ ...editingBooth, size: Math.max(12, (editingBooth.size ?? 24) - 2) })}
+                    className="shrink-0 rounded-md bg-gray-100 px-2 py-1 text-xs font-bold text-gray-600 hover:bg-gray-200"
+                  >
+                    －
+                  </button>
+                  <input
+                    type="range"
+                    min={12}
+                    max={64}
+                    step={2}
+                    value={editingBooth.size ?? 24}
+                    onChange={(e) => setEditingBooth({ ...editingBooth, size: Number(e.target.value) })}
+                    className="flex-1 accent-[#3D7FE0]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setEditingBooth({ ...editingBooth, size: Math.min(64, (editingBooth.size ?? 24) + 2) })}
+                    className="shrink-0 rounded-md bg-gray-100 px-2 py-1 text-xs font-bold text-gray-600 hover:bg-gray-200"
+                  >
+                    ＋
+                  </button>
+                </div>
               </div>
               <div className="flex gap-2 text-xs text-gray-400">
                 <span>X: {editingBooth.x}%</span>

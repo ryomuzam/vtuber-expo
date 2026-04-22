@@ -236,6 +236,7 @@ export type VenueBooth = {
   url?: string;
   x: number;
   y: number;
+  size?: number;
 };
 
 export type VenueMapData = {
