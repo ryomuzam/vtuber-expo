@@ -16,7 +16,10 @@ export default function VenueMapEditor({ initialData }: { initialData: VenueMapD
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
+  const [draggingId, setDraggingId] = useState<string | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
+  const dragStateRef = useRef<{ id: string; startX: number; startY: number; moved: boolean } | null>(null);
+  const suppressClickRef = useRef(false);
 
   const categories = data.pinCategories ?? [];
 
@@ -72,6 +75,40 @@ export default function VenueMapEditor({ initialData }: { initialData: VenueMapD
   function handleBoothClick(booth: VenueBooth) {
     setEditingBooth({ ...booth });
     setIsNew(false);
+  }
+
+  function handlePinPointerDown(e: React.PointerEvent<HTMLButtonElement>, booth: VenueBooth) {
+    if (e.button !== 0) return;
+    e.stopPropagation();
+    e.currentTarget.setPointerCapture(e.pointerId);
+    dragStateRef.current = { id: booth.id, startX: e.clientX, startY: e.clientY, moved: false };
+    setDraggingId(booth.id);
+  }
+
+  function handlePinPointerMove(e: React.PointerEvent<HTMLButtonElement>) {
+    const d = dragStateRef.current;
+    if (!d) return;
+    const dx = e.clientX - d.startX;
+    const dy = e.clientY - d.startY;
+    if (!d.moved && Math.hypot(dx, dy) < 4) return;
+    d.moved = true;
+    suppressClickRef.current = true;
+    const rect = mapRef.current!.getBoundingClientRect();
+    const x = Math.max(0, Math.min(100, parseFloat((((e.clientX - rect.left) / rect.width) * 100).toFixed(1))));
+    const y = Math.max(0, Math.min(100, parseFloat((((e.clientY - rect.top) / rect.height) * 100).toFixed(1))));
+    setData((prev) => ({
+      ...prev,
+      booths: prev.booths.map((b) => (b.id === d.id ? { ...b, x, y } : b)),
+    }));
+  }
+
+  function handlePinPointerUp(e: React.PointerEvent<HTMLButtonElement>) {
+    const d = dragStateRef.current;
+    if (!d) return;
+    e.currentTarget.releasePointerCapture(e.pointerId);
+    dragStateRef.current = null;
+    setDraggingId(null);
+    if (!d.moved) suppressClickRef.current = false;
   }
 
   function handleSaveBooth() {
@@ -221,28 +258,46 @@ export default function VenueMapEditor({ initialData }: { initialData: VenueMapD
       <div className="flex gap-4">
         {/* Map */}
         <div className="flex-1 rounded-xl bg-white p-4 shadow-sm">
-          <p className="mb-3 text-xs text-gray-400">マップ上をクリックしてピンを追加</p>
+          <p className="mb-3 text-xs text-gray-400">マップ上をクリックしてピンを追加・ピンをドラッグして位置を移動・クリックで編集</p>
           <div
             ref={mapRef}
             className="relative cursor-crosshair overflow-hidden rounded-lg border border-gray-200"
             onClick={handleMapClick}
           >
             <img src={data.mapImageUrl} alt="会場マップ" className="w-full" draggable={false} />
-            {data.booths.map((booth) => (
-              <button
-                key={booth.id}
-                onClick={(e) => { e.stopPropagation(); handleBoothClick(booth); }}
-                title={booth.name}
-                className="absolute flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full text-white shadow-md ring-2 ring-white transition hover:scale-125"
-                style={{
-                  left: `${booth.x}%`,
-                  top: `${booth.y}%`,
-                  backgroundColor: getCategoryColor(booth.categoryId),
-                }}
-              >
-                <span className="text-[9px] font-bold leading-none">●</span>
-              </button>
-            ))}
+            {data.booths.map((booth) => {
+              const isDragging = draggingId === booth.id;
+              return (
+                <button
+                  key={booth.id}
+                  onPointerDown={(e) => handlePinPointerDown(e, booth)}
+                  onPointerMove={handlePinPointerMove}
+                  onPointerUp={handlePinPointerUp}
+                  onPointerCancel={handlePinPointerUp}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (suppressClickRef.current) {
+                      suppressClickRef.current = false;
+                      return;
+                    }
+                    handleBoothClick(booth);
+                  }}
+                  title={`${booth.name}（ドラッグで移動）`}
+                  className={`absolute flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full text-white shadow-md ring-2 ring-white touch-none select-none ${
+                    isDragging
+                      ? "scale-125 cursor-grabbing opacity-90 ring-4"
+                      : "cursor-grab transition hover:scale-125"
+                  }`}
+                  style={{
+                    left: `${booth.x}%`,
+                    top: `${booth.y}%`,
+                    backgroundColor: getCategoryColor(booth.categoryId),
+                  }}
+                >
+                  <span className="text-[9px] font-bold leading-none">●</span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
