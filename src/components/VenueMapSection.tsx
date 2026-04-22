@@ -34,6 +34,7 @@ export default function VenueMapSection({ data, labels }: { data: VenueMapData; 
           <img src={data.mapImageUrl} alt={labels.sectionTitle} className="w-full" />
           {data.booths.map((booth) => {
             const size = booth.size ?? 28;
+            const opacity = booth.opacity ?? 1;
             return (
               <button
                 key={booth.id}
@@ -46,6 +47,7 @@ export default function VenueMapSection({ data, labels }: { data: VenueMapData; 
                   width: `${size}px`,
                   height: `${size}px`,
                   backgroundColor: getCategoryColor(booth.categoryId),
+                  opacity,
                 }}
               >
                 <span className="font-bold" style={{ fontSize: `${Math.max(8, Math.round(size * 0.4))}px` }}>●</span>

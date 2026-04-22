@@ -237,6 +237,7 @@ export type VenueBooth = {
   x: number;
   y: number;
   size?: number;
+  opacity?: number;
 };
 
 export type VenueMapData = {

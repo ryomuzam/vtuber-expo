@@ -274,6 +274,7 @@ export default function VenueMapEditor({ initialData }: { initialData: VenueMapD
             {data.booths.map((booth) => {
               const isDragging = draggingId === booth.id;
               const size = booth.size ?? 24;
+              const opacity = booth.opacity ?? 1;
               return (
                 <button
                   key={booth.id}
@@ -292,7 +293,7 @@ export default function VenueMapEditor({ initialData }: { initialData: VenueMapD
                   title={`${booth.name}（ドラッグで移動）`}
                   className={`absolute flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full text-white shadow-md ring-2 ring-white touch-none select-none ${
                     isDragging
-                      ? "scale-125 cursor-grabbing opacity-90 ring-4"
+                      ? "scale-125 cursor-grabbing ring-4"
                       : "cursor-grab transition hover:scale-125"
                   }`}
                   style={{
@@ -301,6 +302,7 @@ export default function VenueMapEditor({ initialData }: { initialData: VenueMapD
                     width: `${size}px`,
                     height: `${size}px`,
                     backgroundColor: getCategoryColor(booth.categoryId),
+                    opacity: isDragging ? Math.min(opacity, 0.9) : opacity,
                   }}
                 >
                   <span className="font-bold leading-none" style={{ fontSize: `${Math.max(8, Math.round(size * 0.4))}px` }}>●</span>
@@ -401,6 +403,38 @@ export default function VenueMapEditor({ initialData }: { initialData: VenueMapD
                     ＋
                   </button>
                 </div>
+              </div>
+              <div>
+                <label className="mb-1 flex items-center justify-between text-xs font-medium text-gray-600">
+                  <span>透明度</span>
+                  <span className="text-gray-400">{Math.round((editingBooth.opacity ?? 1) * 100)}%</span>
+                </label>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditingBooth({ ...editingBooth, opacity: Math.max(0, Math.round(((editingBooth.opacity ?? 1) - 0.1) * 10) / 10) })}
+                    className="shrink-0 rounded-md bg-gray-100 px-2 py-1 text-xs font-bold text-gray-600 hover:bg-gray-200"
+                  >
+                    －
+                  </button>
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    step={5}
+                    value={Math.round((editingBooth.opacity ?? 1) * 100)}
+                    onChange={(e) => setEditingBooth({ ...editingBooth, opacity: Number(e.target.value) / 100 })}
+                    className="flex-1 accent-[#3D7FE0]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setEditingBooth({ ...editingBooth, opacity: Math.min(1, Math.round(((editingBooth.opacity ?? 1) + 0.1) * 10) / 10) })}
+                    className="shrink-0 rounded-md bg-gray-100 px-2 py-1 text-xs font-bold text-gray-600 hover:bg-gray-200"
+                  >
+                    ＋
+                  </button>
+                </div>
+                <p className="mt-1 text-[10px] text-gray-400">0%で完全に透明（下のマップの番号が見えます）</p>
               </div>
               <div className="flex gap-2 text-xs text-gray-400">
                 <span>X: {editingBooth.x}%</span>
