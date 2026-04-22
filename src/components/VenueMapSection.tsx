@@ -56,18 +56,6 @@ export default function VenueMapSection({ data, labels }: { data: VenueMapData; 
           })}
         </div>
 
-        {/* Legend */}
-        {categories.length > 0 && (
-          <div className="mt-4 flex flex-wrap justify-center gap-4">
-            {categories.map((cat) => (
-              <span key={cat.id} className="flex items-center gap-1.5 text-sm text-gray-500">
-                <span className="h-3 w-3 rounded-full" style={{ backgroundColor: cat.color }} />
-                {cat.name}
-              </span>
-            ))}
-          </div>
-        )}
-
         {/* Popup */}
         {selected && (
           <div className="mt-6 rounded-2xl bg-white p-6 shadow-sm">
