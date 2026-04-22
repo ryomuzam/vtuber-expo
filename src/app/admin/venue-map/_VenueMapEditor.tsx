@@ -264,7 +264,13 @@ export default function VenueMapEditor({ initialData }: { initialData: VenueMapD
             className="relative cursor-crosshair overflow-hidden rounded-lg border border-gray-200"
             onClick={handleMapClick}
           >
-            <img src={data.mapImageUrl} alt="会場マップ" className="w-full" draggable={false} />
+            {data.mapImageUrl ? (
+              <img src={data.mapImageUrl} alt="会場マップ" className="w-full" draggable={false} />
+            ) : (
+              <div className="flex aspect-[16/9] items-center justify-center bg-gray-50 text-sm text-gray-400">
+                マップ画像が設定されていません
+              </div>
+            )}
             {data.booths.map((booth) => {
               const isDragging = draggingId === booth.id;
               const size = booth.size ?? 24;

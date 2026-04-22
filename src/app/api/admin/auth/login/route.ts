@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { signToken, verifyPassword } from "@/lib/auth";
+import { signToken, verifyPassword, ADMIN_SESSION_MAX_AGE_SECONDS } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 60 * 60 * 24, // 24h
+      maxAge: ADMIN_SESSION_MAX_AGE_SECONDS,
       path: "/",
     });
 

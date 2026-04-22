@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
-import { verifyToken } from "./lib/auth";
+import { verifyToken, signToken, shouldRefreshToken, ADMIN_SESSION_MAX_AGE_SECONDS } from "./lib/auth";
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -24,6 +24,20 @@ export default async function middleware(request: NextRequest) {
     if (!payload) {
       const response = NextResponse.redirect(new URL("/admin/login", request.url));
       response.cookies.delete("admin_token");
+      return response;
+    }
+
+    if (shouldRefreshToken(payload)) {
+      const { email, role } = payload as { email?: string; role?: string };
+      const refreshed = await signToken({ email, role });
+      const response = NextResponse.next();
+      response.cookies.set("admin_token", refreshed, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: ADMIN_SESSION_MAX_AGE_SECONDS,
+        path: "/",
+      });
       return response;
     }
 
