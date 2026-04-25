@@ -92,7 +92,7 @@ export default async function HomePage({ params }: Props) {
           <TicketSection data={ticketData} labels={{ sectionTitle: tTicket("sectionTitle"), sectionSubtitle: tTicket("sectionSubtitle"), buyButton: tTicket("buyButton"), soldOut: tTicket("soldOut") }} locale={locale} />
         )}
         <AccessSection />
-        {venueMap.isPublic && <VenueMapSection data={venueMap} labels={{ sectionTitle: tVenueMap("sectionTitle"), sectionSubtitle: tVenueMap("sectionSubtitle"), moreInfo: tVenueMap("moreInfo") }} />}
+        {venueMap.isPublic && <VenueMapSection data={venueMap} labels={{ sectionTitle: tVenueMap("sectionTitle"), sectionSubtitle: tVenueMap("sectionSubtitle") }} />}
         {eventSchedule.isPublic && <EventScheduleSection data={eventSchedule} labels={{ sectionTitle: tEventSchedule("sectionTitle"), sectionSubtitle: tEventSchedule("sectionSubtitle") }} locale={locale} />}
         {sponsorPage.isPublic && <SponsorsSection data={sponsorPage} />}
         <SocialSection />

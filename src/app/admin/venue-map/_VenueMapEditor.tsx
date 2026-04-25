@@ -1,11 +1,17 @@
 "use client";
 
 import { useState, useRef } from "react";
-import type { VenueMapData, VenueBooth, PinCategory } from "@/lib/data";
+import type { VenueMapData, VenueBooth, PinCategory, BoothUrl } from "@/lib/data";
 import MediaPicker from "../_components/MediaPicker";
 
 function genId() {
   return Math.random().toString(36).slice(2, 9);
+}
+
+function normalizeBoothUrls(booth: VenueBooth): BoothUrl[] {
+  if (booth.urls && booth.urls.length > 0) return booth.urls;
+  if (booth.url) return [{ id: genId(), label: "", url: booth.url }];
+  return [];
 }
 
 export default function VenueMapEditor({ initialData }: { initialData: VenueMapData }) {
@@ -66,6 +72,7 @@ export default function VenueMapEditor({ initialData }: { initialData: VenueMapD
       name: "",
       categoryId: categories[0]?.id ?? "",
       description: "",
+      urls: [],
       x,
       y,
     });
@@ -73,8 +80,32 @@ export default function VenueMapEditor({ initialData }: { initialData: VenueMapD
   }
 
   function handleBoothClick(booth: VenueBooth) {
-    setEditingBooth({ ...booth });
+    setEditingBooth({ ...booth, urls: normalizeBoothUrls(booth) });
     setIsNew(false);
+  }
+
+  function addBoothUrl() {
+    if (!editingBooth) return;
+    setEditingBooth({
+      ...editingBooth,
+      urls: [...(editingBooth.urls ?? []), { id: genId(), label: "", url: "" }],
+    });
+  }
+
+  function updateBoothUrl(id: string, field: "label" | "url", value: string) {
+    if (!editingBooth) return;
+    setEditingBooth({
+      ...editingBooth,
+      urls: (editingBooth.urls ?? []).map((u) => (u.id === id ? { ...u, [field]: value } : u)),
+    });
+  }
+
+  function removeBoothUrl(id: string) {
+    if (!editingBooth) return;
+    setEditingBooth({
+      ...editingBooth,
+      urls: (editingBooth.urls ?? []).filter((u) => u.id !== id),
+    });
   }
 
   function handlePinPointerDown(e: React.PointerEvent<HTMLButtonElement>, booth: VenueBooth) {
@@ -113,12 +144,18 @@ export default function VenueMapEditor({ initialData }: { initialData: VenueMapD
 
   function handleSaveBooth() {
     if (!editingBooth || !editingBooth.name.trim()) return;
+    const cleanedUrls = (editingBooth.urls ?? [])
+      .map((u) => ({ ...u, label: u.label.trim(), url: u.url.trim() }))
+      .filter((u) => u.url);
+    const { url: _legacyUrl, ...rest } = editingBooth;
+    void _legacyUrl;
+    const cleaned: VenueBooth = { ...rest, urls: cleanedUrls };
     if (isNew) {
-      setData((prev) => ({ ...prev, booths: [...prev.booths, editingBooth] }));
+      setData((prev) => ({ ...prev, booths: [...prev.booths, cleaned] }));
     } else {
       setData((prev) => ({
         ...prev,
-        booths: prev.booths.map((b) => (b.id === editingBooth.id ? editingBooth : b)),
+        booths: prev.booths.map((b) => (b.id === cleaned.id ? cleaned : b)),
       }));
     }
     setEditingBooth(null);
@@ -364,14 +401,50 @@ export default function VenueMapEditor({ initialData }: { initialData: VenueMapD
                 />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-medium text-gray-600">URL</label>
-                <input
-                  type="url"
-                  value={editingBooth.url ?? ""}
-                  onChange={(e) => setEditingBooth({ ...editingBooth, url: e.target.value })}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#3D7FE0] focus:ring-2 focus:ring-[#3D7FE0]/20"
-                  placeholder="https://example.com"
-                />
+                <div className="mb-1 flex items-center justify-between">
+                  <label className="block text-xs font-medium text-gray-600">URL</label>
+                  <button
+                    type="button"
+                    onClick={addBoothUrl}
+                    className="text-xs font-medium text-[#3D7FE0] hover:underline"
+                  >
+                    ＋ URLを追加
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  {(editingBooth.urls ?? []).length === 0 && (
+                    <p className="rounded-md border border-dashed border-gray-200 px-3 py-2 text-xs text-gray-400">
+                      URLがありません。「＋ URLを追加」で追加できます。
+                    </p>
+                  )}
+                  {(editingBooth.urls ?? []).map((u) => (
+                    <div key={u.id} className="space-y-1 rounded-md border border-gray-200 p-2">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={u.label}
+                          onChange={(e) => updateBoothUrl(u.id, "label", e.target.value)}
+                          className="flex-1 rounded border border-gray-200 px-2 py-1 text-xs outline-none focus:border-[#3D7FE0]"
+                          placeholder="ラベル（例: 公式サイト, X）"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeBoothUrl(u.id)}
+                          className="shrink-0 rounded bg-red-50 px-2 py-1 text-xs text-red-500 hover:bg-red-100"
+                        >
+                          削除
+                        </button>
+                      </div>
+                      <input
+                        type="url"
+                        value={u.url}
+                        onChange={(e) => updateBoothUrl(u.id, "url", e.target.value)}
+                        className="w-full rounded border border-gray-200 px-2 py-1 text-xs outline-none focus:border-[#3D7FE0]"
+                        placeholder="https://example.com"
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
               <div>
                 <label className="mb-1 flex items-center justify-between text-xs font-medium text-gray-600">

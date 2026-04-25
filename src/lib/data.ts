@@ -227,6 +227,12 @@ export type PinCategory = {
   color: string;
 };
 
+export type BoothUrl = {
+  id: string;
+  label: string;
+  url: string;
+};
+
 export type VenueBooth = {
   id: string;
   name: string;
@@ -234,6 +240,7 @@ export type VenueBooth = {
   description: string;
   logoUrl?: string;
   url?: string;
+  urls?: BoothUrl[];
   x: number;
   y: number;
   size?: number;

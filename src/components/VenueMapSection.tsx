@@ -1,13 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import type { VenueMapData, VenueBooth } from "@/lib/data";
+import type { VenueMapData, VenueBooth, BoothUrl } from "@/lib/data";
 
 type Labels = {
   sectionTitle: string;
   sectionSubtitle: string;
-  moreInfo: string;
 };
+
+function getBoothUrls(booth: VenueBooth): BoothUrl[] {
+  const list = (booth.urls ?? []).filter((u) => u.url.trim());
+  if (list.length > 0) return list;
+  if (booth.url) return [{ id: "legacy", label: "", url: booth.url }];
+  return [];
+}
 
 export default function VenueMapSection({ data, labels }: { data: VenueMapData; labels: Labels }) {
   const [selected, setSelected] = useState<VenueBooth | null>(null);
@@ -81,19 +87,29 @@ export default function VenueMapSection({ data, labels }: { data: VenueMapData; 
                   {selected.description && (
                     <p className="mt-2 whitespace-pre-wrap text-sm text-gray-500">{selected.description}</p>
                   )}
-                  {selected.url && (
-                    <a
-                      href={selected.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-[#3D7FE0] hover:underline"
-                    >
-                      {labels.moreInfo}
-                      <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                      </svg>
-                    </a>
-                  )}
+                  {(() => {
+                    const urls = getBoothUrls(selected);
+                    if (urls.length === 0) return null;
+                    return (
+                      <ul className="mt-3 space-y-1">
+                        {urls.map((u) => (
+                          <li key={u.id} className="flex flex-wrap items-baseline gap-1.5 text-sm">
+                            {u.label && (
+                              <span className="font-medium text-gray-700">{u.label}:</span>
+                            )}
+                            <a
+                              href={u.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="break-all text-[#3D7FE0] hover:underline"
+                            >
+                              {u.url}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    );
+                  })()}
                 </div>
               </div>
               <button
