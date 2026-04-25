@@ -6,10 +6,11 @@ import NavLink from "./NavLink";
 
 type Props = {
   schedulePublic?: boolean;
+  ticketPublic?: boolean;
   xUrl?: string;
 };
 
-export default function Header({ schedulePublic = false, xUrl }: Props) {
+export default function Header({ schedulePublic = false, ticketPublic = false, xUrl }: Props) {
   const t = useTranslations("Header");
   const locale = useLocale();
 
@@ -17,6 +18,7 @@ export default function Header({ schedulePublic = false, xUrl }: Props) {
     { key: "whatis", href: `/${locale}#about` },
     { key: "news", href: `/${locale}#news` },
     { key: "overview", href: `/${locale}#overview` },
+    ...(ticketPublic ? [{ key: "ticket" as const, href: `/${locale}#ticket` }] : []),
     ...(schedulePublic ? [{ key: "schedule" as const, href: `/${locale}#schedule` }] : []),
   ];
 
@@ -52,7 +54,7 @@ export default function Header({ schedulePublic = false, xUrl }: Props) {
         </div>
 
         {/* Mobile */}
-        <MobileMenu schedulePublic={schedulePublic} xUrl={xUrl} />
+        <MobileMenu schedulePublic={schedulePublic} ticketPublic={ticketPublic} xUrl={xUrl} />
       </div>
     </header>
   );

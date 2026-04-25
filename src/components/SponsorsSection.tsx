@@ -49,7 +49,10 @@ export default function SponsorsSection({ data }: { data: SponsorPageData }) {
         </h2>
         <div className="space-y-8">
           {TIER_ORDER.map((tier) => {
-            const sponsors = data.sponsors.filter((s) => s.tier === tier);
+            if (data.tierVisibility?.[tier] === false) return null;
+            const sponsors = data.sponsors.filter(
+              (s) => s.tier === tier && s.isVisible !== false,
+            );
             if (sponsors.length === 0) return null;
             const config = TIER_CONFIG[tier];
             return (

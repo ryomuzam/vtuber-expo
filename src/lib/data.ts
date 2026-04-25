@@ -361,16 +361,19 @@ export type TieredSponsor = {
   logoUrl: string;
   websiteUrl: string;
   tier: SponsorTier;
+  isVisible?: boolean;
 };
 
 export type SponsorPageData = {
   isPublic: boolean;
   sponsors: TieredSponsor[];
+  tierVisibility?: Partial<Record<SponsorTier, boolean>>;
 };
 
 const staticSponsorPageData: SponsorPageData = {
   isPublic: false,
   sponsors: [],
+  tierVisibility: { gold: true, silver: true, bronze: true, sampling: true },
 };
 
 export async function getSponsorPageData(): Promise<SponsorPageData> {
