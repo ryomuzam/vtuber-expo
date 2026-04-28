@@ -308,6 +308,8 @@ export type EventScheduleData = {
   day2Label: string;
   day2LabelEn?: string;
   items: ScheduleSlot[];
+  displayMode?: "timeline" | "image";
+  imageUrl?: string;
 };
 
 const staticEventScheduleData: EventScheduleData = {

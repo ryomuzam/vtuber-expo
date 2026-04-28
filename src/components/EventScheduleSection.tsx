@@ -17,6 +17,25 @@ export default function EventScheduleSection({ data, labels, locale }: { data: E
   const day1Label = (isEn && data.day1LabelEn) ? data.day1LabelEn : data.day1Label;
   const day2Label = (isEn && data.day2LabelEn) ? data.day2LabelEn : data.day2Label;
 
+  const sectionImageMode = data.displayMode === "image" && data.imageUrl;
+
+  if (sectionImageMode) {
+    return (
+      <section id="schedule" className="py-20 md:py-28">
+        <div className="mx-auto max-w-3xl px-4 md:px-8">
+          <div className="mb-10 text-center">
+            <p className="mb-2 text-xs font-bold uppercase tracking-[0.3em] text-accent-blue/60">{labels.sectionSubtitle}</p>
+            <h2 className="text-3xl font-black text-pop-text md:text-4xl">{labels.sectionTitle}</h2>
+          </div>
+          <div className="overflow-hidden rounded-2xl bg-white shadow-sm">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={data.imageUrl} alt={labels.sectionTitle} className="block w-full" />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section id="schedule" className="py-20 md:py-28">
       <div className="mx-auto max-w-3xl px-4 md:px-8">

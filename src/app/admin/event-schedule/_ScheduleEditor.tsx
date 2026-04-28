@@ -227,6 +227,7 @@ export default function ScheduleEditor({ initialData }: { initialData: EventSche
   }
 
   const dayItems = data.items.filter((s) => s.day === tab);
+  const sectionMode = data.displayMode ?? "timeline";
 
   return (
     <div className="max-w-3xl space-y-4">
@@ -256,6 +257,42 @@ export default function ScheduleEditor({ initialData }: { initialData: EventSche
         </div>
       </div>
 
+      {/* Section display mode */}
+      <div className="rounded-xl bg-white p-4 shadow-sm">
+        <div className="mb-3 flex items-center gap-3">
+          <span className="text-sm font-semibold text-gray-700">セクションの表示</span>
+          <div className="inline-flex rounded-lg border border-gray-200 bg-gray-50 p-0.5">
+            <button
+              type="button"
+              onClick={() => setData((prev) => ({ ...prev, displayMode: "timeline" }))}
+              className={`rounded-md px-3 py-1 text-xs font-semibold transition ${sectionMode === "timeline" ? "bg-white text-[#3D7FE0] shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+            >
+              タイムライン
+            </button>
+            <button
+              type="button"
+              onClick={() => setData((prev) => ({ ...prev, displayMode: "image" }))}
+              className={`rounded-md px-3 py-1 text-xs font-semibold transition ${sectionMode === "image" ? "bg-white text-[#3D7FE0] shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+            >
+              画像のみ
+            </button>
+          </div>
+        </div>
+        {sectionMode === "image" ? (
+          <>
+            <p className="mb-2 text-xs text-gray-500">公開時は DAY タブやタイムラインを非表示にし、この画像のみを表示します。</p>
+            <MediaPicker
+              value={data.imageUrl ?? ""}
+              onChange={(url) => setData((prev) => ({ ...prev, imageUrl: url }))}
+              placeholder="画像URLを入力、または「選択」から画像を選ぶ"
+            />
+          </>
+        ) : (
+          <p className="text-xs text-gray-500">DAY タブとタイムライン（プログラム一覧）を公開します。</p>
+        )}
+      </div>
+
+      {sectionMode === "timeline" && (<>
       {/* Day label editors */}
       <div className="rounded-xl bg-white p-4 shadow-sm space-y-3">
         <div className="grid grid-cols-2 gap-3">
@@ -353,6 +390,7 @@ export default function ScheduleEditor({ initialData }: { initialData: EventSche
           ＋ プログラムを追加
         </button>
       </div>
+      </>)}
     </div>
   );
 }
