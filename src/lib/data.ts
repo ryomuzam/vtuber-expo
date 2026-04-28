@@ -297,6 +297,8 @@ export type ScheduleSlot = {
   performersEn?: string;
   description: string;
   descriptionEn?: string;
+  displayMode?: "text" | "image";
+  imageUrl?: string;
 };
 
 export type EventScheduleData = {

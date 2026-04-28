@@ -12,9 +12,7 @@ export default function EventScheduleSection({ data, labels, locale }: { data: E
   const [tab, setTab] = useState<1 | 2>(1);
   const isEn = locale === "en";
 
-  const dayItems = data.items
-    .filter((s) => s.day === tab)
-    .sort((a, b) => a.startTime.localeCompare(b.startTime));
+  const dayItems = data.items.filter((s) => s.day === tab);
 
   const day1Label = (isEn && data.day1LabelEn) ? data.day1LabelEn : data.day1Label;
   const day2Label = (isEn && data.day2LabelEn) ? data.day2LabelEn : data.day2Label;
@@ -48,26 +46,50 @@ export default function EventScheduleSection({ data, labels, locale }: { data: E
           <div className="absolute left-3 top-0 h-full w-0.5 bg-gray-200" />
           <div className="space-y-6">
             {dayItems.map((slot, i) => {
+              const isImageMode = slot.displayMode === "image" && slot.imageUrl;
               const title = (isEn && slot.titleEn) ? slot.titleEn : slot.title;
               const performers = (isEn && slot.performersEn) ? slot.performersEn : slot.performers;
               const description = (isEn && slot.descriptionEn) ? slot.descriptionEn : slot.description;
+              const hasTime = slot.startTime || slot.endTime;
               return (
                 <div key={slot.id} className="relative">
                   <div className="absolute -left-8 flex h-6 w-6 items-center justify-center rounded-full bg-[#3D7FE0] text-white shadow-sm">
                     <span className="text-[10px] font-bold">{i + 1}</span>
                   </div>
-                  <div className="rounded-xl bg-white p-5 shadow-sm">
-                    <div className="mb-1 flex items-center gap-3">
-                      <span className="text-sm font-bold text-[#3D7FE0]">
-                        {slot.startTime}{slot.endTime ? ` – ${slot.endTime}` : ""}
-                      </span>
-                    </div>
-                    <h3 className="text-base font-bold text-gray-900">{title}</h3>
-                    {performers && (
-                      <p className="mt-1 text-sm text-gray-500">{performers}</p>
-                    )}
-                    {description && (
-                      <p className="mt-1 text-sm text-gray-400">{description}</p>
+                  <div className={`rounded-xl bg-white shadow-sm ${isImageMode ? "overflow-hidden" : "p-5"}`}>
+                    {isImageMode ? (
+                      <>
+                        {hasTime && (
+                          <div className="px-5 pt-4">
+                            <span className="text-sm font-bold text-[#3D7FE0]">
+                              {slot.startTime}{slot.endTime ? ` – ${slot.endTime}` : ""}
+                            </span>
+                          </div>
+                        )}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={slot.imageUrl}
+                          alt={title || "schedule image"}
+                          className={`block w-full ${hasTime ? "mt-2" : ""}`}
+                        />
+                      </>
+                    ) : (
+                      <>
+                        {hasTime && (
+                          <div className="mb-1 flex items-center gap-3">
+                            <span className="text-sm font-bold text-[#3D7FE0]">
+                              {slot.startTime}{slot.endTime ? ` – ${slot.endTime}` : ""}
+                            </span>
+                          </div>
+                        )}
+                        <h3 className="text-base font-bold text-gray-900">{title}</h3>
+                        {performers && (
+                          <p className="mt-1 text-sm text-gray-500">{performers}</p>
+                        )}
+                        {description && (
+                          <p className="mt-1 text-sm text-gray-400">{description}</p>
+                        )}
+                      </>
                     )}
                   </div>
                 </div>

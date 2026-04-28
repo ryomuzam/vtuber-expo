@@ -2,27 +2,48 @@
 
 import { useState } from "react";
 import type { EventScheduleData, ScheduleSlot } from "@/lib/data";
+import MediaPicker from "@/app/admin/_components/MediaPicker";
 
 function genId() {
   return Math.random().toString(36).slice(2, 9);
 }
 
 function emptySlot(day: 1 | 2): ScheduleSlot {
-  return { id: genId(), day, startTime: "", endTime: "", title: "", titleEn: "", performers: "", performersEn: "", description: "", descriptionEn: "" };
+  return { id: genId(), day, startTime: "", endTime: "", title: "", titleEn: "", performers: "", performersEn: "", description: "", descriptionEn: "", displayMode: "text", imageUrl: "" };
 }
 
 function SlotForm({
   slot,
   onChange,
   onDelete,
+  onDragHandleMouseDown,
 }: {
   slot: ScheduleSlot;
   onChange: (s: ScheduleSlot) => void;
   onDelete: () => void;
+  onDragHandleMouseDown?: () => void;
 }) {
+  const mode = slot.displayMode ?? "text";
+
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
       <div className="mb-3 flex items-center gap-2">
+        <button
+          type="button"
+          onMouseDown={onDragHandleMouseDown}
+          aria-label="ドラッグして並び替え"
+          title="ドラッグして並び替え"
+          className="flex h-8 w-6 cursor-grab items-center justify-center text-gray-300 hover:text-gray-500 active:cursor-grabbing"
+        >
+          <svg width="12" height="16" viewBox="0 0 12 16" fill="currentColor" aria-hidden>
+            <circle cx="3" cy="3" r="1.4" />
+            <circle cx="9" cy="3" r="1.4" />
+            <circle cx="3" cy="8" r="1.4" />
+            <circle cx="9" cy="8" r="1.4" />
+            <circle cx="3" cy="13" r="1.4" />
+            <circle cx="9" cy="13" r="1.4" />
+          </svg>
+        </button>
         <input
           type="text"
           value={slot.startTime}
@@ -41,61 +62,102 @@ function SlotForm({
         <button onClick={onDelete} className="ml-auto text-sm text-red-400 hover:text-red-600">削除</button>
       </div>
 
-      {/* Title */}
-      <div className="mb-2 grid grid-cols-2 gap-2">
-        <input
-          type="text"
-          value={slot.title}
-          onChange={(e) => onChange({ ...slot, title: e.target.value })}
-          placeholder="タイトル（日本語）*"
-          className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-[#3D7FE0]"
-        />
-        <input
-          type="text"
-          value={slot.titleEn ?? ""}
-          onChange={(e) => onChange({ ...slot, titleEn: e.target.value })}
-          placeholder="Title (English)"
-          className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-[#3D7FE0]"
-        />
+      {/* Display mode toggle */}
+      <div className="mb-3 inline-flex rounded-lg border border-gray-200 bg-gray-50 p-0.5">
+        <button
+          type="button"
+          onClick={() => onChange({ ...slot, displayMode: "text" })}
+          className={`rounded-md px-3 py-1 text-xs font-semibold transition ${mode === "text" ? "bg-white text-[#3D7FE0] shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+        >
+          テキスト
+        </button>
+        <button
+          type="button"
+          onClick={() => onChange({ ...slot, displayMode: "image" })}
+          className={`rounded-md px-3 py-1 text-xs font-semibold transition ${mode === "image" ? "bg-white text-[#3D7FE0] shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+        >
+          画像のみ
+        </button>
       </div>
 
-      {/* Performers */}
-      <div className="mb-2 grid grid-cols-2 gap-2">
-        <input
-          type="text"
-          value={slot.performers}
-          onChange={(e) => onChange({ ...slot, performers: e.target.value })}
-          placeholder="出演者（日本語・任意）"
-          className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-[#3D7FE0]"
+      {mode === "image" ? (
+        <MediaPicker
+          value={slot.imageUrl ?? ""}
+          onChange={(url) => onChange({ ...slot, imageUrl: url })}
+          placeholder="画像URLを入力、または「選択」から画像を選ぶ"
         />
-        <input
-          type="text"
-          value={slot.performersEn ?? ""}
-          onChange={(e) => onChange({ ...slot, performersEn: e.target.value })}
-          placeholder="Performers (English)"
-          className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-[#3D7FE0]"
-        />
-      </div>
+      ) : (
+        <>
+          {/* Title */}
+          <div className="mb-2 grid grid-cols-2 gap-2">
+            <input
+              type="text"
+              value={slot.title}
+              onChange={(e) => onChange({ ...slot, title: e.target.value })}
+              placeholder="タイトル（日本語）*"
+              className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-[#3D7FE0]"
+            />
+            <input
+              type="text"
+              value={slot.titleEn ?? ""}
+              onChange={(e) => onChange({ ...slot, titleEn: e.target.value })}
+              placeholder="Title (English)"
+              className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-[#3D7FE0]"
+            />
+          </div>
 
-      {/* Description */}
-      <div className="grid grid-cols-2 gap-2">
-        <input
-          type="text"
-          value={slot.description}
-          onChange={(e) => onChange({ ...slot, description: e.target.value })}
-          placeholder="説明（日本語・任意）"
-          className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-[#3D7FE0]"
-        />
-        <input
-          type="text"
-          value={slot.descriptionEn ?? ""}
-          onChange={(e) => onChange({ ...slot, descriptionEn: e.target.value })}
-          placeholder="Description (English)"
-          className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-[#3D7FE0]"
-        />
-      </div>
+          {/* Performers */}
+          <div className="mb-2 grid grid-cols-2 gap-2">
+            <input
+              type="text"
+              value={slot.performers}
+              onChange={(e) => onChange({ ...slot, performers: e.target.value })}
+              placeholder="出演者（日本語・任意）"
+              className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-[#3D7FE0]"
+            />
+            <input
+              type="text"
+              value={slot.performersEn ?? ""}
+              onChange={(e) => onChange({ ...slot, performersEn: e.target.value })}
+              placeholder="Performers (English)"
+              className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-[#3D7FE0]"
+            />
+          </div>
+
+          {/* Description */}
+          <div className="grid grid-cols-2 gap-2">
+            <input
+              type="text"
+              value={slot.description}
+              onChange={(e) => onChange({ ...slot, description: e.target.value })}
+              placeholder="説明（日本語・任意）"
+              className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-[#3D7FE0]"
+            />
+            <input
+              type="text"
+              value={slot.descriptionEn ?? ""}
+              onChange={(e) => onChange({ ...slot, descriptionEn: e.target.value })}
+              placeholder="Description (English)"
+              className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-[#3D7FE0]"
+            />
+          </div>
+        </>
+      )}
     </div>
   );
+}
+
+function reorderInDay(items: ScheduleSlot[], day: 1 | 2, fromId: string, toId: string): ScheduleSlot[] {
+  if (fromId === toId) return items;
+  const dayItems = items.filter((s) => s.day === day);
+  const fromIdx = dayItems.findIndex((s) => s.id === fromId);
+  const toIdx = dayItems.findIndex((s) => s.id === toId);
+  if (fromIdx < 0 || toIdx < 0) return items;
+  const reordered = [...dayItems];
+  const [moved] = reordered.splice(fromIdx, 1);
+  reordered.splice(toIdx, 0, moved);
+  let cursor = 0;
+  return items.map((s) => (s.day === day ? reordered[cursor++] : s));
 }
 
 export default function ScheduleEditor({ initialData }: { initialData: EventScheduleData }) {
@@ -104,6 +166,8 @@ export default function ScheduleEditor({ initialData }: { initialData: EventSche
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [dragOverId, setDragOverId] = useState<string | null>(null);
 
   function updateSlot(id: string, updated: ScheduleSlot) {
     setData((prev) => ({ ...prev, items: prev.items.map((s) => (s.id === id ? updated : s)) }));
@@ -116,6 +180,26 @@ export default function ScheduleEditor({ initialData }: { initialData: EventSche
   function addSlot() {
     const newSlot = emptySlot(tab);
     setData((prev) => ({ ...prev, items: [...prev.items, newSlot] }));
+  }
+
+  function handleDragOver(e: React.DragEvent, overId: string) {
+    if (!draggingId) return;
+    e.preventDefault();
+    if (dragOverId !== overId) setDragOverId(overId);
+  }
+
+  function handleDrop(e: React.DragEvent, overId: string) {
+    e.preventDefault();
+    if (draggingId && draggingId !== overId) {
+      setData((prev) => ({ ...prev, items: reorderInDay(prev.items, tab, draggingId, overId) }));
+    }
+    setDraggingId(null);
+    setDragOverId(null);
+  }
+
+  function handleDragEnd() {
+    setDraggingId(null);
+    setDragOverId(null);
   }
 
   async function handleSave() {
@@ -236,14 +320,32 @@ export default function ScheduleEditor({ initialData }: { initialData: EventSche
 
       {/* Schedule items */}
       <div className="space-y-3">
-        {dayItems.map((slot) => (
-          <SlotForm
-            key={slot.id}
-            slot={slot}
-            onChange={(updated) => updateSlot(slot.id, updated)}
-            onDelete={() => deleteSlot(slot.id)}
-          />
-        ))}
+        {dayItems.map((slot) => {
+          const isDragging = draggingId === slot.id;
+          const isOver = dragOverId === slot.id && draggingId !== slot.id;
+          return (
+            <div
+              key={slot.id}
+              draggable={isDragging}
+              onDragStart={(e) => {
+                e.dataTransfer.effectAllowed = "move";
+                e.dataTransfer.setData("text/plain", slot.id);
+              }}
+              onDragOver={(e) => handleDragOver(e, slot.id)}
+              onDragLeave={() => { if (dragOverId === slot.id) setDragOverId(null); }}
+              onDrop={(e) => handleDrop(e, slot.id)}
+              onDragEnd={handleDragEnd}
+              className={`transition ${isDragging ? "opacity-50" : ""} ${isOver ? "ring-2 ring-[#3D7FE0] rounded-xl" : ""}`}
+            >
+              <SlotForm
+                slot={slot}
+                onChange={(updated) => updateSlot(slot.id, updated)}
+                onDelete={() => deleteSlot(slot.id)}
+                onDragHandleMouseDown={() => setDraggingId(slot.id)}
+              />
+            </div>
+          );
+        })}
         <button
           onClick={addSlot}
           className="w-full rounded-xl border-2 border-dashed border-gray-300 py-3 text-sm font-medium text-gray-400 transition hover:border-[#3D7FE0] hover:text-[#3D7FE0]"
